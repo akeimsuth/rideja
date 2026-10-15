@@ -1,0 +1,6 @@
+{
+  "name": "RideJa - Jamaica Ride-Hailing Platform",
+  "description": "Production-ready Jamaica ride-hailing platform featuring passenger booking, driver dispatch, compliance verification, and operations dashboard.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
