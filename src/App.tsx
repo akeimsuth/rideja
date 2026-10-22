@@ -1165,13 +1165,45 @@ export default function App() {
   });
 
   const [ledger, setLedger] = useState<FinancialLedgerEntry[]>(() => {
-    const saved = localStorage.getItem('rideja_ledger');
-    return saved ? JSON.parse(saved) : INITIAL_LEDGER;
+    try {
+      const saved = localStorage.getItem('rideja_ledger');
+      if (saved) {
+        const parsed: FinancialLedgerEntry[] = JSON.parse(saved);
+        const seen = new Set<string>();
+        const unique: FinancialLedgerEntry[] = [];
+        for (const item of parsed) {
+          if (item && item.id && !seen.has(item.id)) {
+            seen.add(item.id);
+            unique.push(item);
+          }
+        }
+        return unique.length > 0 ? unique : INITIAL_LEDGER;
+      }
+    } catch {
+      // ignore
+    }
+    return INITIAL_LEDGER;
   });
 
   const [incidents, setIncidents] = useState<SafetyIncident[]>(() => {
-    const saved = localStorage.getItem('rideja_incidents');
-    return saved ? JSON.parse(saved) : INITIAL_INCIDENTS;
+    try {
+      const saved = localStorage.getItem('rideja_incidents');
+      if (saved) {
+        const parsed: SafetyIncident[] = JSON.parse(saved);
+        const seen = new Set<string>();
+        const unique: SafetyIncident[] = [];
+        for (const item of parsed) {
+          if (item && item.id && !seen.has(item.id)) {
+            seen.add(item.id);
+            unique.push(item);
+          }
+        }
+        return unique.length > 0 ? unique : INITIAL_INCIDENTS;
+      }
+    } catch {
+      // ignore
+    }
+    return INITIAL_INCIDENTS;
   });
 
   // Current Active Ride State
@@ -1252,11 +1284,11 @@ export default function App() {
             }
           } else if (type === 'SYNC_CHAT') {
             setChatMessages(prev => [...prev, payload]);
-          } else if (type === 'SYNC_INCIDENT') {
-            setIncidents(prev => [payload, ...prev]);
+          } else if (type === 'SYNC_INCIDENT' && payload?.id) {
+            setIncidents(prev => (prev.some(i => i.id === payload.id) ? prev : [payload, ...prev]));
             playChime('sos');
-          } else if (type === 'SYNC_LEDGER') {
-            setLedger(prev => [payload, ...prev]);
+          } else if (type === 'SYNC_LEDGER' && payload?.id) {
+            setLedger(prev => (prev.some(l => l.id === payload.id) ? prev : [payload, ...prev]));
           }
         };
       }
@@ -1579,7 +1611,7 @@ export default function App() {
     const driverNet = finalFare - commission;
 
     const newLedgerEntry: FinancialLedgerEntry = {
-      id: `led-${Date.now().toString().slice(-4)}`,
+      id: `led-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
       tripId: currentRide.id,
       timestamp: new Date().toISOString().replace('T', ' ').slice(0, 16),
       description: `Trip: ${currentRide.pickup.name} to ${currentRide.destination.name}`,
@@ -1590,7 +1622,7 @@ export default function App() {
       status: 'settled',
     };
 
-    setLedger(prev => [newLedgerEntry, ...prev]);
+    setLedger(prev => (prev.some(l => l.id === newLedgerEntry.id) ? prev : [newLedgerEntry, ...prev]));
     broadcastSync('SYNC_LEDGER', newLedgerEntry);
 
     // Update driver balance
@@ -1637,7 +1669,7 @@ export default function App() {
   const handleTriggerSos = (type: 'emergency_sos' | 'unsafe_driving' | 'vehicle_mismatch') => {
     playChime('sos');
     const newInc: SafetyIncident = {
-      id: `inc-${Date.now().toString().slice(-4)}`,
+      id: `inc-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
       tripId: currentRide ? currentRide.id : 'N/A',
       reportedBy: currentRole === 'driver' ? 'driver' : 'passenger',
       reporterName: currentRole === 'driver' ? driver.fullName : 'Akeim Sutherland',
@@ -1647,7 +1679,7 @@ export default function App() {
       status: 'open',
       notes: `Urgent safety report dispatched from ${pickupLoc.area}. Emergency services notified.`,
     };
-    setIncidents(prev => [newInc, ...prev]);
+    setIncidents(prev => (prev.some(i => i.id === newInc.id) ? prev : [newInc, ...prev]));
     broadcastSync('SYNC_INCIDENT', newInc);
     setSosModalOpen(false);
     showToast('RideJa Safety Team Alerted. Jamaica Constabulary Force (119) & Emergency Response dispatch activated.');
@@ -3008,8 +3040,8 @@ export default function App() {
         </div>
 
         <div className="p-4 space-y-3">
-          {ledger.map((item) => (
-            <div key={item.id} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+          {ledger.map((item, idx) => (
+            <div key={`${item.id}-${idx}`} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-900">{item.tripId}</span>
                 <span className="text-xs text-slate-500">{item.timestamp}</span>
@@ -4025,8 +4057,8 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
-                      {ledger.map(row => (
-                        <tr key={row.id} className="hover:bg-slate-900/50">
+                      {ledger.map((row, idx) => (
+                        <tr key={`${row.id}-${idx}`} className="hover:bg-slate-900/50">
                           <td className="p-3 sm:p-3.5 font-mono text-slate-400">{row.id}</td>
                           <td className="p-3 sm:p-3.5 text-slate-300">{row.timestamp}</td>
                           <td className="p-3 sm:p-3.5 font-bold text-white">{row.description}</td>
@@ -4172,8 +4204,8 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
-                      {incidents.map(inc => (
-                        <tr key={inc.id} className="hover:bg-slate-900/50">
+                      {incidents.map((inc, idx) => (
+                        <tr key={`${inc.id}-${idx}`} className="hover:bg-slate-900/50">
                           <td className="p-3 sm:p-3.5 font-mono text-slate-400">{inc.id}</td>
                           <td className="p-3 sm:p-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
