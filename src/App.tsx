@@ -203,7 +203,7 @@ export interface RideRequest {
   assignedAt?: string;
   pickupEtaMins?: number;
   tripEtaMins?: number;
-  driverPosition?: { lat: number; lng: number };
+  driverPosition?: { lat: number; lng: number; bearing?: number };
   passengerRating?: number;
   passengerFeedback?: string;
   driverTipJMD?: number;
@@ -334,12 +334,12 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     category: 'driver',
     authority: 'Registrar General\'s Department, Jamaica',
     documentNumber: 'JA-9821-4820',
-    issueDate: '2022-04-10',
-    expiryDate: '2032-04-10',
+    issueDate: '2024-04-10',
+    expiryDate: '2034-04-10',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Compliance Admin (Sarah)',
-    reviewedAt: '2026-01-15',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-2',
@@ -348,12 +348,12 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     category: 'driver',
     authority: 'Island Traffic Authority, Jamaica',
     documentNumber: 'DL-876-004921',
-    issueDate: '2023-08-14',
-    expiryDate: '2028-08-14',
+    issueDate: '2024-08-14',
+    expiryDate: '2029-08-14',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Compliance Admin (Sarah)',
-    reviewedAt: '2026-01-15',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-3',
@@ -361,13 +361,13 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     name: 'Criminal Records Office Certificate (Police Record)',
     category: 'driver',
     authority: 'Ministry of National Security, Kingston, Jamaica',
-    documentNumber: 'CRO-2025-7832',
-    issueDate: '2025-11-20',
-    expiryDate: '2026-11-20',
+    documentNumber: 'CRO-2026-7832',
+    issueDate: '2026-03-20',
+    expiryDate: '2027-03-20',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Super Admin (Marcus)',
-    reviewedAt: '2026-01-16',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-4',
@@ -376,12 +376,12 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     category: 'driver',
     authority: 'Transport Authority of Jamaica',
     documentNumber: 'TA-KGN-4819',
-    issueDate: '2024-02-01',
-    expiryDate: '2027-02-01',
+    issueDate: '2025-02-01',
+    expiryDate: '2028-02-01',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Compliance Admin (Sarah)',
-    reviewedAt: '2026-01-16',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-5',
@@ -390,12 +390,12 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     category: 'vehicle',
     authority: 'Tax Administration Jamaica',
     documentNumber: 'RC-9912401',
-    issueDate: '2024-05-10',
-    expiryDate: '2027-05-10',
+    issueDate: '2025-05-10',
+    expiryDate: '2028-05-10',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Fleet Officer (Ken)',
-    reviewedAt: '2026-01-17',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-6',
@@ -403,13 +403,13 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     name: 'Commercial Public Passenger Vehicle (PPV) Insurance Certificate',
     category: 'vehicle',
     authority: 'Guardian General Insurance Jamaica Ltd',
-    documentNumber: 'GGJ-PPV-2025-998',
-    issueDate: '2025-06-01',
-    expiryDate: '2026-06-01',
+    documentNumber: 'GGJ-PPV-2026-998',
+    issueDate: '2026-06-01',
+    expiryDate: '2027-06-01',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Fleet Officer (Ken)',
-    reviewedAt: '2026-01-17',
+    reviewedAt: '2026-10-15',
   },
   {
     id: 'doc-7',
@@ -417,13 +417,13 @@ export const INITIAL_DRIVER_DOCUMENTS: DriverDocument[] = [
     name: 'Island Traffic Authority Certificate of Fitness',
     category: 'vehicle',
     authority: 'Island Traffic Authority (Swallowfield Depot, Kingston)',
-    documentNumber: 'COF-KGN-2025-412',
-    issueDate: '2025-09-12',
-    expiryDate: '2026-09-12',
+    documentNumber: 'COF-KGN-2026-412',
+    issueDate: '2026-09-12',
+    expiryDate: '2027-09-12',
     status: 'approved',
     fileUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80',
     reviewedBy: 'Fleet Officer (Ken)',
-    reviewedAt: '2026-01-17',
+    reviewedAt: '2026-10-15',
   },
 ];
 
@@ -606,14 +606,149 @@ export function evaluateDriverEligibility(driver: DriverProfile) {
 /* ==========================================================================
    REAL INTERACTIVE MAP COMPONENT (LEAFLET + CARTODB TILES)
    Displays high-resolution real street map of Jamaica with street names,
-   landmarks, custom car markers, pickup/destination pins, and live routes.
+   landmarks, animated car markers with rotation, pickup/destination pins, and live routes.
    ========================================================================== */
+
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+  bearing?: number;
+}
+
+export function calculateBearing(start: GeoPoint, end: GeoPoint): number {
+  const dLng = ((end.lng - start.lng) * Math.PI) / 180;
+  const lat1 = (start.lat * Math.PI) / 180;
+  const lat2 = (end.lat * Math.PI) / 180;
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  const brng = (Math.atan2(y, x) * 180) / Math.PI;
+  return (brng + 360) % 360;
+}
+
+export function distanceBetween(p1: GeoPoint, p2: GeoPoint): number {
+  const R = 6371; // km
+  const dLat = ((p2.lat - p1.lat) * Math.PI) / 180;
+  const dLng = ((p2.lng - p1.lng) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((p1.lat * Math.PI) / 180) * Math.cos((p2.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export function interpolatePath(
+  points: GeoPoint[],
+  progress: number
+): { point: GeoPoint; bearing: number; remainingKm: number } {
+  if (points.length === 0) return { point: { lat: 0, lng: 0 }, bearing: 0, remainingKm: 0 };
+  if (points.length === 1) return { point: points[0], bearing: 0, remainingKm: 0 };
+
+  const clamped = Math.max(0, Math.min(1, progress));
+  const segmentLengths: number[] = [];
+  let totalLength = 0;
+  for (let i = 0; i < points.length - 1; i++) {
+    const d = distanceBetween(points[i], points[i + 1]);
+    segmentLengths.push(d);
+    totalLength += d;
+  }
+
+  const targetDistance = clamped * totalLength;
+  const remainingKm = Math.max(0, totalLength - targetDistance);
+
+  let accumulated = 0;
+  for (let i = 0; i < segmentLengths.length; i++) {
+    const segLen = segmentLengths[i];
+    if (accumulated + segLen >= targetDistance || i === segmentLengths.length - 1) {
+      const segProgress = segLen > 0 ? (targetDistance - accumulated) / segLen : 0;
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const lat = p1.lat + (p2.lat - p1.lat) * segProgress;
+      const lng = p1.lng + (p2.lng - p1.lng) * segProgress;
+      const bearing = calculateBearing(p1, p2);
+      return { point: { lat, lng }, bearing, remainingKm };
+    }
+    accumulated += segLen;
+  }
+
+  const last = points[points.length - 1];
+  const secondLast = points[points.length - 2];
+  return { point: last, bearing: calculateBearing(secondLast, last), remainingKm: 0 };
+}
+
+// Street-aligned realistic waypoints generator for Kingston
+export const generateApproachWaypoints = (pickup: LocationPoint): GeoPoint[] => [
+  { lat: pickup.lat - 0.0075, lng: pickup.lng + 0.0055 }, // Starts on Knutsford / Trafalgar corridor
+  { lat: pickup.lat - 0.0050, lng: pickup.lng + 0.0042 },
+  { lat: pickup.lat - 0.0030, lng: pickup.lng + 0.0020 },
+  { lat: pickup.lat - 0.0012, lng: pickup.lng + 0.0006 },
+  { lat: pickup.lat, lng: pickup.lng }, // Arrived at pickup
+];
+
+export const generateTripWaypoints = (pickup: LocationPoint, dropoff: LocationPoint): GeoPoint[] => {
+  const dLat = dropoff.lat - pickup.lat;
+  const dLng = dropoff.lng - pickup.lng;
+  return [
+    { lat: pickup.lat, lng: pickup.lng },
+    { lat: pickup.lat + dLat * 0.22, lng: pickup.lng + dLng * 0.05 },
+    { lat: pickup.lat + dLat * 0.25, lng: pickup.lng + dLng * 0.45 },
+    { lat: pickup.lat + dLat * 0.65, lng: pickup.lng + dLng * 0.48 },
+    { lat: pickup.lat + dLat * 0.72, lng: dropoff.lng },
+    { lat: dropoff.lat, lng: dropoff.lng },
+  ];
+};
+
+const createCarIcon = (bearing: number = 0, vehicleTitle: string = 'Toyota Corolla') => {
+  const html = `
+    <div class="relative car-marker-container" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+      <!-- Subtle Pulsing Proximity Radar beneath Car -->
+      <div style="position: absolute; inset: 4px; border-radius: 9999px; background: rgba(0, 166, 81, 0.25); animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+      
+      <!-- Smoothly Rotating Car Chassis & Headlights -->
+      <div class="car-rotation-wrapper" style="transform: rotate(${Math.round(bearing)}deg); transition: transform 0.35s ease-out; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; position: relative;">
+        <!-- Forward Headlight Illuminating Beam -->
+        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 24px; height: 20px; background: linear-gradient(to top, rgba(254, 240, 138, 0.55), rgba(254, 240, 138, 0)); clip-path: polygon(20% 100%, 80% 100%, 100% 0%, 0% 0%); pointer-events: none; filter: blur(0.8px);"></div>
+        
+        <!-- Authentic Top-Down Modern Sedan SVG -->
+        <svg width="22" height="40" viewBox="0 0 22 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 5px 6px rgba(0,0,0,0.45));">
+          <!-- Metallic Silver Body Shell -->
+          <rect x="2" y="3" width="18" height="34" rx="4.5" fill="#F1F5F9" stroke="#0F172A" stroke-width="1.2"/>
+          <!-- Jamaican Green Accent / Roof -->
+          <rect x="5" y="15" width="12" height="11" rx="2" fill="#00A651"/>
+          <!-- Front Windshield -->
+          <path d="M4 11 C6 8.5, 16 8.5, 18 11 L17 14 C15 13.5, 7 13.5, 5 14 Z" fill="#0F172A"/>
+          <!-- Rear Windshield -->
+          <path d="M5 28 C7 29, 15 29, 17 28 L17.5 31 C16 31.8, 6 31.8, 4.5 31 Z" fill="#0F172A"/>
+          <!-- Side Mirrors -->
+          <rect x="0.5" y="11" width="1.8" height="3.5" rx="0.8" fill="#0F172A"/>
+          <rect x="19.7" y="11" width="1.8" height="3.5" rx="0.8" fill="#0F172A"/>
+          <!-- Headlights -->
+          <ellipse cx="4.5" cy="4" rx="1.5" ry="1" fill="#FEF08A"/>
+          <ellipse cx="17.5" cy="4" rx="1.5" ry="1" fill="#FEF08A"/>
+          <!-- Red Taillights -->
+          <ellipse cx="4.5" cy="36.5" rx="1.5" ry="0.8" fill="#EF4444"/>
+          <ellipse cx="17.5" cy="36.5" rx="1.5" ry="0.8" fill="#EF4444"/>
+        </svg>
+      </div>
+
+      <!-- Live Floating Driver Badge above the Car -->
+      <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); color: #FFD600; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 9999px; border: 1px solid rgba(255, 214, 0, 0.45); white-space: nowrap; box-shadow: 0 3px 8px rgba(0,0,0,0.5); pointer-events: auto;">
+        ${vehicleTitle}
+      </div>
+    </div>
+  `;
+  return L.divIcon({
+    html,
+    className: 'custom-moving-car-pin',
+    iconSize: [56, 56],
+    iconAnchor: [28, 28],
+  });
+};
 
 interface LeafletMapProps {
   pickup: LocationPoint;
   destination: LocationPoint;
   isDark?: boolean;
-  driverPosition?: { lat: number; lng: number };
+  driverPosition?: { lat: number; lng: number; bearing?: number };
   showRoute?: boolean;
   onSelectPreset?: (loc: LocationPoint) => void;
   activeStatus?: RideStatus;
@@ -632,6 +767,8 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const routeLayerRef = useRef<L.Polyline | null>(null);
+  const driverMarkerRef = useRef<L.Marker | null>(null);
+  const lastFittedStatusRef = useRef<string>('');
 
   // Initialize Leaflet Map once
   useEffect(() => {
@@ -656,6 +793,8 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
     return () => {
       map.remove();
       mapInstanceRef.current = null;
+      markersLayerRef.current = null;
+      driverMarkerRef.current = null;
     };
   }, []);
 
@@ -664,14 +803,12 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    // Remove existing tile layers
     map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
         map.removeLayer(layer);
       }
     });
 
-    // CARTO Basemaps requires the query parameter ?key=YOUR_KEY (cb1_...)
     const cartoKey = 'cb1_4kq7_1_cdef43338f3cb85d9245d692';
     const tileUrl = isDark
       ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`
@@ -683,7 +820,6 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       crossOrigin: true,
     });
 
-    // Fallback to OpenStreetMap if CARTO tile fails
     layer.on('tileerror', (error) => {
       console.warn('Tile error, falling back to OSM:', error);
     });
@@ -691,13 +827,16 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
     layer.addTo(map);
   }, [isDark]);
 
-  // Update Markers, Route, and Bounds
+  // Update Static Pins, Route Polyline, and Bounds
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = markersLayerRef.current;
     if (!map || !layerGroup) return;
 
+    // Clear existing markers except we handle driver separately
     layerGroup.clearLayers();
+    driverMarkerRef.current = null;
+
     if (routeLayerRef.current) {
       map.removeLayer(routeLayerRef.current);
       routeLayerRef.current = null;
@@ -705,18 +844,18 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
 
     // 1. Pickup Marker (Green Pulse Ring Pin)
     const pickupHtml = `
-      <div style="position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+      <div style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
         <div style="position: absolute; inset: 0; border-radius: 9999px; background: rgba(0, 166, 81, 0.35); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-        <div style="width: 18px; height: 18px; border-radius: 9999px; background: #00A651; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 4px; height: 4px; border-radius: 9999px; background: #ffffff;"></div>
+        <div style="width: 20px; height: 20px; border-radius: 9999px; background: #00A651; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 5px; height: 5px; border-radius: 9999px; background: #ffffff;"></div>
         </div>
       </div>
     `;
     const pickupIcon = L.divIcon({
       html: pickupHtml,
       className: 'custom-pickup-pin',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
     });
     L.marker([pickup.lat, pickup.lng], { icon: pickupIcon })
       .bindPopup(`<b>Pickup:</b> ${pickup.name}`)
@@ -724,102 +863,128 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
 
     // 2. Destination Marker (Red Pin with Square Head)
     const dropoffHtml = `
-      <div style="position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
-        <div style="width: 18px; height: 18px; border-radius: 4px; background: #D92D20; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 4px; height: 4px; border-radius: 1px; background: #ffffff;"></div>
+      <div style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 20px; height: 20px; border-radius: 4px; background: #D92D20; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 5px; height: 5px; border-radius: 1px; background: #ffffff;"></div>
         </div>
       </div>
     `;
     const dropoffIcon = L.divIcon({
       html: dropoffHtml,
       className: 'custom-dropoff-pin',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
     });
     L.marker([destination.lat, destination.lng], { icon: dropoffIcon })
       .bindPopup(`<b>Destination:</b> ${destination.name}`)
       .addTo(layerGroup);
 
-    // 3. Driver Vehicle Marker (Moving Car)
-    const currentDriverPos = driverPosition || {
-      lat: pickup.lat - 0.005,
-      lng: pickup.lng + 0.004,
-    };
-
-    const carHtml = `
-      <div style="width: 32px; height: 32px; border-radius: 9999px; background: #101418; border: 2px solid #FFD600; box-shadow: 0 6px 14px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-          <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
-        </svg>
-      </div>
-    `;
-    const carIcon = L.divIcon({
-      html: carHtml,
-      className: 'custom-car-pin',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-    L.marker([currentDriverPos.lat, currentDriverPos.lng], { icon: carIcon })
-      .bindPopup(`<b>Driver Dwayne Williams</b><br>Silver Toyota Corolla`)
-      .addTo(layerGroup);
-
-    // 4. Idle Nearby Fleet in Jamaica
-    const nearbyFleet = [
-      { lat: 18.0145, lng: -76.8025 },
-      { lat: 18.0095, lng: -76.7925 },
-      { lat: 18.0185, lng: -76.7845 },
-    ];
-    nearbyFleet.forEach(pos => {
-      const idleCarHtml = `
-        <div style="width: 22px; height: 22px; border-radius: 9999px; background: #1e293b; border: 1.5px solid #00A651; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; opacity: 0.85;">
-          <div style="width: 6px; height: 6px; border-radius: 9999px; background: #00A651;"></div>
-        </div>
-      `;
-      const idleIcon = L.divIcon({
-        html: idleCarHtml,
-        className: 'idle-car-pin',
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
-      });
-      L.marker([pos.lat, pos.lng], { icon: idleIcon }).addTo(layerGroup);
-    });
-
-    // 5. Draw Street-like Route Polyline
-    if (showRoute) {
-      // Waypoints interpolating between pickup and dropoff
-      const midLat = (pickup.lat + destination.lat) / 2 + 0.001;
-      const midLng = (pickup.lng + destination.lng) / 2 - 0.001;
-
-      const routePoints: L.LatLngExpression[] = [
-        [pickup.lat, pickup.lng],
-        [midLat, pickup.lng],
-        [midLat, midLng],
-        [destination.lat, midLng],
-        [destination.lat, destination.lng],
+    // 3. Nearby Idle Fleet in Jamaica (when searching or idle)
+    if (!activeStatus || activeStatus === 'SEARCHING') {
+      const nearbyFleet = [
+        { lat: pickup.lat + 0.0035, lng: pickup.lng - 0.0040 },
+        { lat: pickup.lat - 0.0030, lng: pickup.lng + 0.0045 },
+        { lat: pickup.lat + 0.0050, lng: pickup.lng + 0.0030 },
       ];
+      nearbyFleet.forEach(pos => {
+        const idleCarHtml = `
+          <div style="width: 24px; height: 24px; border-radius: 9999px; background: #0f172a; border: 2px solid #00A651; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 6px; height: 6px; border-radius: 9999px; background: #FFD600;"></div>
+          </div>
+        `;
+        const idleIcon = L.divIcon({
+          html: idleCarHtml,
+          className: 'idle-car-pin',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        L.marker([pos.lat, pos.lng], { icon: idleIcon }).addTo(layerGroup);
+      });
+    }
 
-      const polyline = L.polyline(routePoints, {
-        color: '#00A651',
-        weight: 5,
-        opacity: 0.9,
+    // 4. Draw Appropriate Street Route Polyline
+    let routeCoords: L.LatLngExpression[] = [];
+    let polylineColor = '#00A651';
+
+    if (activeStatus === 'DRIVER_ARRIVING') {
+      // Approach route from driver start to pickup
+      const approachWaypoints = generateApproachWaypoints(pickup);
+      routeCoords = approachWaypoints.map(p => [p.lat, p.lng]);
+      polylineColor = '#FFD600'; // Jamaican Gold for driver arriving
+    } else if (activeStatus === 'IN_PROGRESS' || showRoute) {
+      // Full trip route from pickup to destination
+      const tripWaypoints = generateTripWaypoints(pickup, destination);
+      routeCoords = tripWaypoints.map(p => [p.lat, p.lng]);
+      polylineColor = '#00A651'; // Jamaican Green for active trip
+    }
+
+    if (routeCoords.length > 0) {
+      const polyline = L.polyline(routeCoords, {
+        color: polylineColor,
+        weight: 6,
+        opacity: 0.92,
         lineCap: 'round',
         lineJoin: 'round',
       }).addTo(map);
-
       routeLayerRef.current = polyline;
-
-      // Fit bounds to show both pickup & dropoff comfortably
-      const bounds = L.latLngBounds([
-        [pickup.lat, pickup.lng],
-        [destination.lat, destination.lng],
-        [currentDriverPos.lat, currentDriverPos.lng],
-      ]);
-      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 16 });
-    } else {
-      map.setView([pickup.lat, pickup.lng], 15);
     }
-  }, [pickup, destination, driverPosition, showRoute]);
+
+    // Fit bounds once for this pickup/destination/status combo
+    const statusKey = `${pickup.id}_${destination.id}_${activeStatus || 'default'}`;
+    if (lastFittedStatusRef.current !== statusKey) {
+      lastFittedStatusRef.current = statusKey;
+      if (activeStatus === 'DRIVER_ARRIVING') {
+        const approachWaypoints = generateApproachWaypoints(pickup);
+        const bounds = L.latLngBounds(approachWaypoints.map(p => [p.lat, p.lng]));
+        map.fitBounds(bounds, { padding: [55, 55], maxZoom: 16 });
+      } else if (showRoute || activeStatus === 'IN_PROGRESS') {
+        const bounds = L.latLngBounds([
+          [pickup.lat, pickup.lng],
+          [destination.lat, destination.lng],
+        ]);
+        map.fitBounds(bounds, { padding: [55, 55], maxZoom: 16 });
+      } else {
+        map.setView([pickup.lat, pickup.lng], 15);
+      }
+    }
+  }, [pickup, destination, showRoute, activeStatus]);
+
+  // 5. Dedicated Smooth Driver Marker Movement & Rotation
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const layerGroup = markersLayerRef.current;
+    if (!map || !layerGroup) return;
+
+    const currentPos = driverPosition || (activeStatus === 'DRIVER_ARRIVING'
+      ? generateApproachWaypoints(pickup)[0]
+      : { lat: pickup.lat - 0.005, lng: pickup.lng + 0.004, bearing: 45 });
+
+    if (driverMarkerRef.current) {
+      // Smoothly reposition marker
+      driverMarkerRef.current.setLatLng([currentPos.lat, currentPos.lng]);
+
+      // Smoothly rotate the car chassis via DOM
+      const markerEl = driverMarkerRef.current.getElement();
+      if (markerEl) {
+        const wrapper = markerEl.querySelector('.car-rotation-wrapper') as HTMLElement;
+        if (wrapper && typeof currentPos.bearing === 'number') {
+          wrapper.style.transform = `rotate(${Math.round(currentPos.bearing)}deg)`;
+        }
+      }
+    } else {
+      // Create driver marker
+      const initialBearing = currentPos.bearing ?? 45;
+      const icon = createCarIcon(initialBearing, 'Dwayne (Toyota Corolla)');
+      const marker = L.marker([currentPos.lat, currentPos.lng], {
+        icon,
+        zIndexOffset: 1000, // Keep car on top of all pins
+      })
+        .bindPopup(`<b>Driver Dwayne Williams</b><br>Silver Toyota Corolla (PPV-4820)`)
+        .addTo(layerGroup);
+
+      driverMarkerRef.current = marker;
+    }
+  }, [driverPosition, activeStatus, pickup]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -831,10 +996,14 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
           onClick={() => {
             const map = mapInstanceRef.current;
             if (map) {
-              map.setView([pickup.lat, pickup.lng], 15, { animate: true });
+              if (driverPosition) {
+                map.setView([driverPosition.lat, driverPosition.lng], 16, { animate: true });
+              } else {
+                map.setView([pickup.lat, pickup.lng], 15, { animate: true });
+              }
             }
           }}
-          title="Recenter to Pickup"
+          title="Recenter to Live Car / Pickup"
           className="w-10 h-10 rounded-full bg-white shadow-lg border border-slate-200 flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition-all"
         >
           <Navigation className="w-5 h-5 text-[#00A651]" />
@@ -857,8 +1026,9 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       </div>
 
       {/* Map Watermark Banner */}
-      <div className="absolute bottom-2 left-2 z-[400] px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm border border-slate-200 text-[9px] font-semibold text-slate-600 shadow-sm">
-        Kingston & St Andrew • OpenStreetMap / CartoDB
+      <div className="absolute bottom-2 left-2 z-[400] px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm border border-slate-200 text-[9px] font-semibold text-slate-600 shadow-sm flex items-center gap-1.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#00A651]"></span>
+        <span>Live Navigation • CARTO / OpenStreetMap</span>
       </div>
     </div>
   );
@@ -953,7 +1123,37 @@ export default function App() {
 
   const [driver, setDriver] = useState<DriverProfile>(() => {
     const saved = localStorage.getItem('rideja_driver');
-    return saved ? JSON.parse(saved) : INITIAL_DRIVER;
+    if (saved) {
+      try {
+        const parsed: DriverProfile = JSON.parse(saved);
+        // Ensure all 7 mandatory documents are present, up to date with future expiries, and approved
+        const syncedDocs = INITIAL_DRIVER_DOCUMENTS.map(initDoc => {
+          const match = parsed.documents?.find(d => d.type === initDoc.type);
+          if (!match) return initDoc;
+          const isExpired = new Date(match.expiryDate).getTime() < new Date('2026-10-14T11:37:19-07:00').getTime();
+          if (isExpired || match.status !== 'approved') {
+            return {
+              ...match,
+              issueDate: initDoc.issueDate,
+              expiryDate: initDoc.expiryDate,
+              status: 'approved' as const,
+              reviewedBy: 'Compliance Admin (Sarah)',
+              reviewedAt: '2026-10-15',
+            };
+          }
+          return match;
+        });
+        return {
+          ...parsed,
+          status: 'active' as const,
+          isOnline: true,
+          documents: syncedDocs,
+        };
+      } catch {
+        return INITIAL_DRIVER;
+      }
+    }
+    return INITIAL_DRIVER;
   });
 
   const [driversList, setDriversList] = useState<DriverProfile[]>(() => {
@@ -1148,7 +1348,7 @@ export default function App() {
     return evaluateDriverEligibility(driver);
   }, [driver]);
 
-  // Dispatch & Ride Lifecycle State Machine
+  // Dispatch & Ride Lifecycle State Machine (Live Animated Vehicle Simulation)
   useEffect(() => {
     if (!currentRide) return;
 
@@ -1166,38 +1366,111 @@ export default function App() {
     }
 
     if (currentRide.status === 'DRIVER_ARRIVING') {
+      const approachWaypoints = generateApproachWaypoints(currentRide.pickup);
       const interval = setInterval(() => {
         setSimProgress(prev => {
-          if (prev >= 100) {
+          const next = prev + 5;
+          if (next >= 100) {
             clearInterval(interval);
             playChime('arrival');
-            setCurrentRide(r => (r ? { ...r, status: 'DRIVER_ARRIVED', pickupEtaMins: 0 } : null));
-            return 0;
+            const endPoint = approachWaypoints[approachWaypoints.length - 1];
+            const prevPoint = approachWaypoints[approachWaypoints.length - 2];
+            const finalBearing = calculateBearing(prevPoint, endPoint);
+            setCurrentRide(r => {
+              if (!r) return null;
+              const arrived: RideRequest = {
+                ...r,
+                status: 'DRIVER_ARRIVED',
+                pickupEtaMins: 0,
+                driverPosition: { lat: endPoint.lat, lng: endPoint.lng, bearing: finalBearing },
+              };
+              broadcastSync('SYNC_RIDE', arrived);
+              return arrived;
+            });
+            showToast('📍 Driver Dwayne has arrived at the pickup location!');
+            return 100;
           }
-          return prev + 15;
+
+          const { point, bearing } = interpolatePath(approachWaypoints, next / 100);
+          const etaMins = Math.max(1, Math.ceil((1 - next / 100) * 3));
+
+          setCurrentRide(r => {
+            if (!r || r.status !== 'DRIVER_ARRIVING') return r;
+            const updated: RideRequest = {
+              ...r,
+              pickupEtaMins: etaMins,
+              driverPosition: { lat: point.lat, lng: point.lng, bearing },
+            };
+            broadcastSync('SYNC_RIDE', updated);
+            return updated;
+          });
+          return next;
         });
-      }, 1000);
+      }, 650);
       return () => clearInterval(interval);
     }
 
     if (currentRide.status === 'IN_PROGRESS') {
+      const tripWaypoints = generateTripWaypoints(currentRide.pickup, currentRide.destination);
       const interval = setInterval(() => {
         setSimProgress(prev => {
-          if (prev >= 100) {
+          const next = prev + 4.5;
+          if (next >= 100) {
             clearInterval(interval);
             handleCompleteTrip();
-            return 0;
+            return 100;
           }
-          return prev + 12;
+
+          const { point, bearing } = interpolatePath(tripWaypoints, next / 100);
+          const totalDuration = currentRide.durationMins || 8;
+          const etaMins = Math.max(1, Math.ceil((1 - next / 100) * totalDuration));
+
+          setCurrentRide(r => {
+            if (!r || r.status !== 'IN_PROGRESS') return r;
+            const updated: RideRequest = {
+              ...r,
+              tripEtaMins: etaMins,
+              driverPosition: { lat: point.lat, lng: point.lng, bearing },
+            };
+            broadcastSync('SYNC_RIDE', updated);
+            return updated;
+          });
+          return next;
         });
-      }, 1200);
+      }, 750);
       return () => clearInterval(interval);
     }
   }, [currentRide?.status]);
 
+  // Fast-Forward Helpers for Presentations
+  const handleFastForwardArrival = () => {
+    if (!currentRide || currentRide.status !== 'DRIVER_ARRIVING') return;
+    const approachWaypoints = generateApproachWaypoints(currentRide.pickup);
+    const endPoint = approachWaypoints[approachWaypoints.length - 1];
+    setSimProgress(100);
+    playChime('arrival');
+    const arrived: RideRequest = {
+      ...currentRide,
+      status: 'DRIVER_ARRIVED',
+      pickupEtaMins: 0,
+      driverPosition: { lat: endPoint.lat, lng: endPoint.lng, bearing: 0 },
+    };
+    setCurrentRide(arrived);
+    broadcastSync('SYNC_RIDE', arrived);
+    showToast('⚡ Fast-forward: Driver Dwayne has arrived at pickup!');
+  };
+
+  const handleFastForwardTrip = () => {
+    if (!currentRide || currentRide.status !== 'IN_PROGRESS') return;
+    setSimProgress(100);
+    handleCompleteTrip();
+    showToast('⚡ Fast-forward: Trip completed at destination!');
+  };
+
   // Handlers for Ride Booking
   const handleRequestRide = () => {
     const pin = Math.floor(1000 + Math.random() * 9000).toString();
+    const approachStart = generateApproachWaypoints(pickupLoc)[0];
     const newRide: RideRequest = {
       id: `RJ-${Math.floor(100 + Math.random() * 900)}`,
       passengerId: 'pax-901',
@@ -1216,11 +1489,12 @@ export default function App() {
       paymentMethod,
       paymentStatus: 'pending',
       createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      driverPosition: { lat: pickupLoc.lat - 0.004, lng: pickupLoc.lng + 0.003 },
+      driverPosition: { lat: approachStart.lat, lng: approachStart.lng, bearing: 45 },
       pickupEtaMins: 3,
       tripEtaMins: selectedFareInfo.durationMins,
     };
 
+    setSimProgress(0);
     setCurrentRide(newRide);
     broadcastSync('SYNC_RIDE', newRide);
     setPassengerScreen('finding_driver');
@@ -1231,6 +1505,10 @@ export default function App() {
   const handleDriverAcceptTrip = () => {
     if (!currentRide) return;
     playChime('dispatch');
+    const approachStart = generateApproachWaypoints(currentRide.pickup)[0];
+    const approachSecond = generateApproachWaypoints(currentRide.pickup)[1];
+    const initialBearing = calculateBearing(approachStart, approachSecond);
+
     const updatedRide: RideRequest = {
       ...currentRide,
       status: 'DRIVER_ARRIVING',
@@ -1243,7 +1521,9 @@ export default function App() {
       vehiclePlate: driver.currentVehicle.plate,
       assignedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       pickupEtaMins: 3,
+      driverPosition: { lat: approachStart.lat, lng: approachStart.lng, bearing: initialBearing },
     };
+    setSimProgress(0);
     setCurrentRide(updatedRide);
     broadcastSync('SYNC_RIDE', updatedRide);
     setPassengerScreen('driver_approaching');
@@ -1252,7 +1532,12 @@ export default function App() {
   const handleDriverArrived = () => {
     if (!currentRide) return;
     playChime('arrival');
-    const updated: RideRequest = { ...currentRide, status: 'DRIVER_ARRIVED', pickupEtaMins: 0 };
+    const updated: RideRequest = {
+      ...currentRide,
+      status: 'DRIVER_ARRIVED',
+      pickupEtaMins: 0,
+      driverPosition: { lat: currentRide.pickup.lat, lng: currentRide.pickup.lng, bearing: 0 },
+    };
     setCurrentRide(updated);
     broadcastSync('SYNC_RIDE', updated);
   };
@@ -1262,11 +1547,20 @@ export default function App() {
     if (enteredPin.trim() === currentRide.pickupPin) {
       setPinError('');
       setEnteredPin('');
-      const updated: RideRequest = { ...currentRide, status: 'IN_PROGRESS' };
+      const tripWaypoints = generateTripWaypoints(currentRide.pickup, currentRide.destination);
+      const initialBearing = calculateBearing(tripWaypoints[0], tripWaypoints[1]);
+      const updated: RideRequest = {
+        ...currentRide,
+        status: 'IN_PROGRESS',
+        driverPosition: { lat: tripWaypoints[0].lat, lng: tripWaypoints[0].lng, bearing: initialBearing },
+        tripEtaMins: currentRide.durationMins || 8,
+      };
+      setSimProgress(0);
       setCurrentRide(updated);
       broadcastSync('SYNC_RIDE', updated);
       setPassengerScreen('in_trip');
       playChime('dispatch');
+      showToast('🚖 PIN verified! Trip in progress to destination.');
     } else {
       setPinError('Incorrect 4-digit PIN. Please verify with passenger.');
     }
@@ -1903,6 +2197,7 @@ export default function App() {
           destination={dropoffLoc}
           showRoute={true}
           driverPosition={currentRide?.driverPosition}
+          activeStatus={currentRide?.status || 'DRIVER_ARRIVING'}
         />
 
         {/* Top Floating ETA Card (Matches Phone 4 in Collage) */}
@@ -1931,12 +2226,27 @@ export default function App() {
             </button>
           </div>
 
-          {/* 4-Digit Pickup PIN Banner */}
-          <div className="flex justify-center mt-1">
+          {/* 4-Digit Pickup PIN Banner & Live Movement Status */}
+          <div className="flex flex-col items-center gap-1.5 mt-1 px-4">
             <div className="px-4 py-1 rounded-full bg-[#101418] text-white text-xs font-bold shadow-lg flex items-center gap-2 border border-slate-700">
               <span className="text-[#FFD600]">Pickup PIN:</span>
               <span className="tracking-widest text-sm font-extrabold">{currentRide?.pickupPin}</span>
             </div>
+
+            {currentRide?.status === 'DRIVER_ARRIVING' && (
+              <div className="px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-bold shadow-lg flex items-center gap-2 border border-[#FFD600]/40">
+                <span className="w-2 h-2 rounded-full bg-[#00A651] animate-ping" />
+                <span className="text-[#FFD600]">Car En Route:</span>
+                <span>{Math.round(simProgress)}%</span>
+                <span className="text-slate-400">•</span>
+                <button
+                  onClick={handleFastForwardArrival}
+                  className="text-xs text-[#00A651] hover:text-green-300 underline font-extrabold"
+                >
+                  Skip to Arrived ⚡
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -2061,6 +2371,7 @@ export default function App() {
           isDark={true}
           showRoute={true}
           driverPosition={currentRide?.driverPosition}
+          activeStatus="IN_PROGRESS"
         />
 
         {/* Top Dark Badge: "On trip • Enjoy your ride" (Matches Phone 5 in Collage) */}
@@ -2084,7 +2395,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Bottom Dark Sheet: Arriving in 2 min (Matches Phone 5 in Collage) */}
+      {/* Bottom Dark Sheet: Arriving in dynamic min */}
       <div className="p-4 bg-[#101418] border-t border-slate-800 rounded-t-3xl shadow-2xl space-y-4 z-10 pb-6">
         <div className="w-12 h-1 bg-slate-700 rounded-full mx-auto" />
 
@@ -2092,7 +2403,9 @@ export default function App() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-bold text-slate-400">Arriving in</p>
-            <h2 className="text-2xl font-extrabold text-white">2 min</h2>
+            <h2 className="text-2xl font-extrabold text-white">
+              {currentRide?.tripEtaMins ?? Math.max(1, Math.ceil((1 - simProgress / 100) * (currentRide?.durationMins || 6)))} min
+            </h2>
           </div>
           <div className="text-right">
             <p className="text-xs text-slate-400">Destination</p>
@@ -2102,12 +2415,26 @@ export default function App() {
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-          <div
-            className="bg-[#00A651] h-full transition-all duration-500"
-            style={{ width: `${Math.min(100, simProgress + 30)}%` }}
-          />
+        {/* Live Trip Waypoint Progress Bar & Fast Forward Button */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-1.5 text-[#00A651] font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#00A651] animate-ping" />
+              Car Moving on Route ({Math.round(simProgress)}%)
+            </span>
+            <button
+              onClick={handleFastForwardTrip}
+              className="px-2.5 py-0.5 rounded-full bg-slate-800 hover:bg-slate-700 text-[10px] text-yellow-400 font-extrabold border border-yellow-500/40"
+            >
+              Skip to Destination 🏁
+            </button>
+          </div>
+          <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-[#00A651] h-full transition-all duration-500"
+              style={{ width: `${Math.min(100, Math.max(6, simProgress))}%` }}
+            />
+          </div>
         </div>
 
         {/* Driver Snapshot */}
@@ -2810,6 +3137,7 @@ export default function App() {
                   isDark={true}
                   showRoute={currentRide?.status === 'DRIVER_ARRIVING' || currentRide?.status === 'IN_PROGRESS'}
                   driverPosition={currentRide?.driverPosition}
+                  activeStatus={currentRide?.status}
                 />
 
                 {/* Status Indicator Banner */}
@@ -2900,12 +3228,40 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* Driver En Route: Tap to Confirm Arrival at Pickup */}
+                  {currentRide.status === 'DRIVER_ARRIVING' && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span>Pickup: <strong className="text-white">{currentRide.pickup.name}</strong></span>
+                        <span className="font-bold text-[#FFD600]">ETA {currentRide.pickupEtaMins ?? 3} min</span>
+                      </div>
+                      <button
+                        onClick={handleDriverArrived}
+                        className="w-full py-3.5 rounded-2xl bg-[#00A651] hover:bg-green-600 text-white font-extrabold text-sm shadow-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+                      >
+                        <MapPin className="w-4 h-4" />
+                        Tap to Confirm Arrival at Pickup 📍
+                      </button>
+                    </div>
+                  )}
+
                   {/* 4-Digit PIN Entry Box when Driver Arrives */}
                   {currentRide.status === 'DRIVER_ARRIVED' && (
-                    <div className="p-3 bg-slate-900 rounded-2xl border border-slate-800 space-y-2">
-                      <p className="text-xs font-bold text-slate-300">
-                        Ask passenger for 4-digit Pickup PIN (Demo PIN: {currentRide.pickupPin}):
-                      </p>
+                    <div className="p-3.5 bg-slate-900 rounded-2xl border border-slate-800 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-slate-300">
+                          Ask passenger for 4-digit PIN:
+                        </p>
+                        <button
+                          onClick={() => {
+                            setEnteredPin(currentRide.pickupPin);
+                            showToast(`PIN ${currentRide.pickupPin} filled`);
+                          }}
+                          className="px-2 py-0.5 rounded-lg bg-amber-500/20 text-[#FFD600] text-[11px] font-bold border border-amber-500/30 hover:bg-amber-500/30 transition-colors"
+                        >
+                          Auto-Fill PIN ({currentRide.pickupPin})
+                        </button>
+                      </div>
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -2917,7 +3273,7 @@ export default function App() {
                         />
                         <button
                           onClick={handleVerifyPinAndStartTrip}
-                          className="px-4 py-2 rounded-xl bg-[#00A651] text-white font-bold text-xs hover:bg-green-600"
+                          className="px-4 py-2 rounded-xl bg-[#00A651] text-white font-bold text-xs hover:bg-green-600 active:scale-[0.98] transition-all"
                         >
                           Verify & Start Trip
                         </button>
@@ -2995,6 +3351,28 @@ export default function App() {
                   )}
                 </ul>
               </div>
+
+              {/* One-Tap Demo Document Refresh & Validation */}
+              <button
+                onClick={() => {
+                  setDriver(prev => ({
+                    ...prev,
+                    status: 'active',
+                    isOnline: true,
+                    documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
+                      ...d,
+                      status: 'approved',
+                      reviewedBy: 'Compliance Admin (Sarah)',
+                      reviewedAt: '2026-10-15',
+                    })),
+                  }));
+                  showToast('All 7 statutory documents verified & up to date with Transport Authority standards!');
+                }}
+                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition-colors active:scale-[0.98]"
+              >
+                <CheckCheck className="w-4 h-4 text-[#00A651]" />
+                Update & Re-verify All Documents (Demo Ready)
+              </button>
 
               {/* 7 Required Statutory Documents List */}
               <div className="space-y-2.5">
@@ -3694,6 +4072,108 @@ export default function App() {
           )}
         </div>
       )}
+
+      {/* Sleek Floating Demo Quick-Switch Bar for Client Presentations */}
+      <aside aria-label="Demo Role Switcher" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[800] bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700 shadow-2xl flex items-center gap-2 text-xs font-semibold">
+        <span className="text-[10px] uppercase font-bold text-slate-400 px-1 hidden sm:inline">Role Switcher:</span>
+        <button
+          onClick={() => navigateTo('passenger')}
+          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
+            currentRole === 'passenger' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          <Smartphone className="w-3.5 h-3.5" />
+          <span>Customer</span>
+        </button>
+        <button
+          onClick={() => {
+            setDriver(prev => ({
+              ...prev,
+              status: 'active',
+              isOnline: true,
+              documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
+                ...d,
+                status: 'approved',
+                reviewedBy: 'Compliance Admin (Sarah)',
+                reviewedAt: '2026-10-15',
+              })),
+            }));
+            navigateTo('driver');
+          }}
+          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
+            currentRole === 'driver' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          <Car className="w-3.5 h-3.5" />
+          <span>Driver App</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-pulse" />
+        </button>
+        <button
+          onClick={() => navigateTo('admin')}
+          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
+            currentRole === 'admin' ? 'bg-slate-700 text-white shadow' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          <Building className="w-3.5 h-3.5" />
+          <span>Admin</span>
+        </button>
+        <div className="w-[1px] h-4 bg-slate-700 mx-0.5 hidden sm:block" />
+
+        {/* Live Simulation Tracking Pill */}
+        {currentRide?.status === 'DRIVER_ARRIVING' && (
+          <div className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/30 px-2.5 py-1 rounded-full text-yellow-300 text-[11px] font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
+            <span>Car Arriving: {Math.round(simProgress)}%</span>
+            <button
+              onClick={handleFastForwardArrival}
+              className="text-[#00A651] font-extrabold hover:text-white underline ml-1 text-[10px]"
+              title="Skip animation directly to pickup arrival"
+            >
+              Arrive Now ⚡
+            </button>
+          </div>
+        )}
+
+        {currentRide?.status === 'IN_PROGRESS' && (
+          <div className="flex items-center gap-1.5 bg-[#00A651]/10 border border-[#00A651]/30 px-2.5 py-1 rounded-full text-green-300 text-[11px] font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-ping" />
+            <span>In Trip: {Math.round(simProgress)}%</span>
+            <button
+              onClick={handleFastForwardTrip}
+              className="text-yellow-400 font-extrabold hover:text-white underline ml-1 text-[10px]"
+              title="Skip animation directly to dropoff completion"
+            >
+              Complete Trip 🏁
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={() => {
+            setCurrentRide(null);
+            localStorage.removeItem('rideja_active_ride');
+            broadcastSync('SYNC_RIDE', null);
+            setDriver(prev => ({
+              ...prev,
+              status: 'active',
+              isOnline: true,
+              documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
+                ...d,
+                status: 'approved',
+                reviewedBy: 'Compliance Admin (Sarah)',
+                reviewedAt: '2026-10-15',
+              })),
+            }));
+            setPassengerScreen('home');
+            showToast('Demo reset: All 7 documents up to date, Driver Online & ready');
+          }}
+          title="Reset ride & ensure driver documents are valid"
+          className="px-2.5 py-1 rounded-full text-slate-400 hover:text-[#FFD600] transition-colors flex items-center gap-1 text-[11px]"
+        >
+          <RefreshCw className="w-3 h-3" />
+          <span className="hidden sm:inline">Reset Demo</span>
+        </button>
+      </aside>
 
 
 
