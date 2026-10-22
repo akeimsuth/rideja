@@ -9,7 +9,7 @@ import {
   Activity, Lock, Send, RefreshCw, AlertOctagon, Receipt, Plus,
   Filter, Sparkles, Home, Briefcase, ChevronDown, CheckCheck,
   Building, Map as MapIcon, AlertCircle, FileSpreadsheet, ExternalLink, QrCode, Compass,
-  Wifi, Battery, Signal, ArrowUpRight
+  Wifi, Battery, Signal, ArrowUpRight, ChevronUp, ArrowUpDown, Minus
 } from 'lucide-react';
 
 /* ==========================================================================
@@ -1088,6 +1088,9 @@ export default function App() {
     | 'ledger';
 
   const [adminScreen, setAdminScreen] = useState<AdminScreen>('overview');
+  const [mobileAdminMenuOpen, setMobileAdminMenuOpen] = useState<boolean>(false);
+  const [demoBarMinimized, setDemoBarMinimized] = useState<boolean>(false);
+  const [demoBarPosition, setDemoBarPosition] = useState<'bottom' | 'top'>('bottom');
 
   // Direct Route Navigation Helper (/driver, /admin, /passenger)
   const navigateTo = (role: AppRole, screen?: PassengerScreen) => {
@@ -1200,6 +1203,8 @@ export default function App() {
   const [pinError, setPinError] = useState<string>('');
   const [sosModalOpen, setSosModalOpen] = useState<boolean>(false);
   const [adminInspectionDoc, setAdminInspectionDoc] = useState<DriverDocument | null>(null);
+  const [resolvingIncident, setResolvingIncident] = useState<SafetyIncident | null>(null);
+  const [incidentResolutionNote, setIncidentResolutionNote] = useState<string>('');
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const showToast = (msg: string) => {
@@ -3499,10 +3504,184 @@ export default function App() {
      ========================================================================== */
 
   const renderAdminPortal = () => {
+    interface AdminNavItem {
+      id: AdminScreen;
+      icon: React.ComponentType<{ className?: string }>;
+      label: string;
+      fullLabel: string;
+      badge?: number;
+    }
+
+    const adminNavItems: AdminNavItem[] = [
+      { id: 'overview', icon: Activity, label: 'Overview', fullLabel: 'Overview Dashboard' },
+      { id: 'verification_queue', icon: ShieldCheck, label: 'Verification', fullLabel: 'Driver Verification Queue', badge: driver.documents.filter(d => d.status !== 'approved').length },
+      { id: 'drivers', icon: Users, label: 'Drivers', fullLabel: 'Fleet & Driver Records', badge: driversList.length },
+      { id: 'live_dispatch', icon: Navigation, label: 'Dispatch', fullLabel: 'Live Dispatch Operations', badge: currentRide ? 1 : 0 },
+      { id: 'fares', icon: Sliders, label: 'Fares', fullLabel: 'Fare & Market Engine' },
+      { id: 'safety_incidents', icon: AlertOctagon, label: 'Safety', fullLabel: 'Safety & Incident Queue', badge: incidents.filter(i => i.status === 'open').length },
+      { id: 'ledger', icon: Receipt, label: 'Ledger', fullLabel: 'Financial Audit Ledger' },
+    ];
+
     return (
-      <div className="w-full h-full bg-[#0b0f14] text-slate-100 flex overflow-hidden">
-        {/* Left Sidebar */}
-        <div className="w-64 bg-[#10161f] border-r border-slate-800 flex flex-col justify-between p-4 shrink-0">
+      <div className="w-full h-full bg-[#0b0f14] text-slate-100 flex flex-col md:flex-row overflow-hidden relative">
+        {/* Mobile Top Navigation App Bar (Visible on mobile screens) */}
+        <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#10161f] border-b border-slate-800 z-30 shrink-0">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
+              className="p-1.5 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 active:scale-95 transition-all"
+              aria-label="Toggle navigation drawer"
+            >
+              {mobileAdminMenuOpen ? <X className="w-5 h-5 text-[#FFD600]" /> : <Menu className="w-5 h-5 text-white" />}
+            </button>
+            <div className="flex items-center gap-1.5">
+              <div className="w-7 h-7 rounded-lg bg-[#00A651] flex items-center justify-center font-black text-white text-xs shadow-sm">
+                RJ
+              </div>
+              <div>
+                <span className="font-extrabold text-sm tracking-tight text-white leading-tight block">
+                  Ride<span className="text-[#FFD600]">Ja</span> Admin
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded-full bg-green-950/90 text-green-300 border border-green-800/80 text-[10px] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-ping" />
+              Live
+            </span>
+            <button
+              onClick={() => {
+                setCurrentRole('passenger');
+                setPassengerScreen('home');
+              }}
+              title="Switch to Passenger App"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+            >
+              <Smartphone className="w-4 h-4 text-[#00A651]" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Horizontal Quick-Nav Scroll Bar */}
+        <div className="md:hidden flex items-center gap-1.5 px-3 py-2 bg-[#0c1017] border-b border-slate-800/80 overflow-x-auto no-scrollbar shrink-0 z-20">
+          {adminNavItems.map(item => {
+            const isActive = adminScreen === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setAdminScreen(item.id as AdminScreen);
+                  setMobileAdminMenuOpen(false);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs whitespace-nowrap shrink-0 transition-all ${
+                  isActive
+                    ? 'bg-[#00A651] text-white shadow-sm'
+                    : 'bg-slate-900/90 text-slate-400 hover:text-white border border-slate-800'
+                }`}
+              >
+                <item.icon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
+                {Boolean(item.badge && item.badge > 0) && (
+                  <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-black ${isActive ? 'bg-black/30 text-white' : 'bg-slate-800 text-yellow-400'}`}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mobile Slide-In Navigation Drawer Overlay */}
+        {mobileAdminMenuOpen && (
+          <>
+            <div
+              onClick={() => setMobileAdminMenuOpen(false)}
+              className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-xs z-40 animate-in fade-in"
+            />
+            <div className="md:hidden fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-[#10161f] border-r border-slate-800 z-50 p-4 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-200">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-[#00A651] flex items-center justify-center font-black text-white text-xs shadow-md">
+                      RJ
+                    </div>
+                    <div>
+                      <span className="font-extrabold text-base tracking-tight text-white">
+                        Ride<span className="text-[#FFD600]">Ja</span>
+                      </span>
+                      <p className="text-[10px] text-slate-400 font-semibold">Command Center</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setMobileAdminMenuOpen(false)}
+                    className="p-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  {adminNavItems.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setAdminScreen(item.id as AdminScreen);
+                        setMobileAdminMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                        adminScreen === item.id
+                          ? 'bg-[#00A651] text-white shadow-md'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <item.icon className="w-4 h-4 shrink-0" />
+                        <span>{item.fullLabel}</span>
+                      </div>
+                      {Boolean(item.badge && item.badge > 0) && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-800 text-yellow-400 border border-slate-700">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Drawer Operator Profile */}
+              <div className="pt-3 border-t border-slate-800 space-y-2">
+                <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                      HQ
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-white truncate">Marcus (Super Admin)</p>
+                      <p className="text-[10px] text-[#00A651] font-semibold">Kingston Operations</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setMobileAdminMenuOpen(false);
+                    setCurrentRole('passenger');
+                    setPassengerScreen('home');
+                  }}
+                  className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center justify-center gap-2"
+                >
+                  <Smartphone className="w-3.5 h-3.5 text-[#00A651]" />
+                  <span>Exit to Passenger App</span>
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Desktop Sidebar (hidden on mobile, visible md+) */}
+        <div className="hidden md:flex md:w-64 bg-[#10161f] border-r border-slate-800 flex-col justify-between p-4 shrink-0">
           <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
               <div className="flex items-center gap-2">
@@ -3516,7 +3695,6 @@ export default function App() {
                   <p className="text-[10px] text-slate-400 font-semibold">Command Center</p>
                 </div>
               </div>
-              {/* Back to Passenger App */}
               <button
                 onClick={() => {
                   setCurrentRole('passenger');
@@ -3531,26 +3709,25 @@ export default function App() {
 
             {/* Sidebar Navigation */}
             <div className="space-y-1">
-              {[
-                { id: 'overview', icon: Activity, label: 'Overview Dashboard' },
-                { id: 'verification_queue', icon: ShieldCheck, label: 'Driver Verification Queue' },
-                { id: 'drivers', icon: Users, label: 'Fleet & Driver Records' },
-                { id: 'live_dispatch', icon: Navigation, label: 'Live Dispatch Operations' },
-                { id: 'fares', icon: Sliders, label: 'Fare & Market Engine' },
-                { id: 'safety_incidents', icon: AlertOctagon, label: 'Safety & Incident Queue' },
-                { id: 'ledger', icon: Receipt, label: 'Financial Audit Ledger' },
-              ].map(item => (
+              {adminNavItems.map(item => (
                 <button
                   key={item.id}
                   onClick={() => setAdminScreen(item.id as AdminScreen)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-all ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-all ${
                     adminScreen === item.id
                       ? 'bg-[#00A651] text-white shadow-md'
                       : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                   }`}
                 >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.fullLabel}</span>
+                  </div>
+                  {Boolean(item.badge && item.badge > 0) && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-800 text-yellow-400 border border-slate-700">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -3571,18 +3748,18 @@ export default function App() {
         </div>
 
         {/* Right Main Admin Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-3.5 sm:p-5 md:p-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-800">
             <div>
-              <h1 className="text-2xl font-extrabold text-white capitalize">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-white capitalize flex items-center gap-2">
                 {adminScreen.replace('_', ' ')}
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 line-clamp-1">
                 Authorized Regulatory & Dispatch Portal for Jamaica Transportation Authority
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <button
                 onClick={() => {
                   setCurrentRole('passenger');
@@ -3591,9 +3768,9 @@ export default function App() {
                 className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white flex items-center gap-1.5"
               >
                 <Smartphone className="w-3.5 h-3.5 text-[#00A651]" />
-                Exit to Passenger App
+                <span>Passenger App</span>
               </button>
-              <span className="px-3 py-1 rounded-full bg-green-950 text-green-300 border border-green-800 text-xs font-bold flex items-center gap-1.5">
+              <span className="hidden sm:flex px-3 py-1 rounded-full bg-green-950 text-green-300 border border-green-800 text-xs font-bold items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#00A651] animate-ping" />
                 Live Network Active
               </span>
@@ -3602,62 +3779,69 @@ export default function App() {
 
           {/* 1. Overview Dashboard */}
           {adminScreen === 'overview' && (
-            <div className="space-y-6">
-              {/* Top KPI Cards */}
-              <div className="grid grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
-                  <p className="text-xs font-semibold text-slate-400">Total Registered Drivers</p>
-                  <h3 className="text-2xl font-extrabold text-white">{driversList.length} Drivers</h3>
-                  <p className="text-[11px] text-[#00A651]">2 Active • 1 Pending Review</p>
+            <div className="space-y-4 sm:space-y-6">
+              {/* Top KPI Cards (Responsive 2 cols on mobile, 4 on desktop) */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-400 line-clamp-1">Registered Drivers</p>
+                  <h3 className="text-lg sm:text-2xl font-extrabold text-white">{driversList.length} Drivers</h3>
+                  <p className="text-[10px] sm:text-[11px] text-[#00A651] line-clamp-1">2 Active • 1 Pending</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
-                  <p className="text-xs font-semibold text-slate-400">Active Rides in Progress</p>
-                  <h3 className="text-2xl font-extrabold text-[#FFD600]">{currentRide ? 1 : 0} Live</h3>
-                  <p className="text-[11px] text-slate-400">Corporate Area & Highway 2000</p>
+                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-400 line-clamp-1">Active Rides</p>
+                  <h3 className="text-lg sm:text-2xl font-extrabold text-[#FFD600]">{currentRide ? 1 : 0} Live</h3>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 line-clamp-1">Corporate Area & Hwy 2000</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
-                  <p className="text-xs font-semibold text-slate-400">Platform Gross Volume</p>
-                  <h3 className="text-2xl font-extrabold text-white">
+                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-400 line-clamp-1">Platform Volume</p>
+                  <h3 className="text-lg sm:text-2xl font-extrabold text-white">
                     JMD ${ledger.reduce((acc, l) => acc + l.grossAmountJMD, 0).toLocaleString()}
                   </h3>
-                  <p className="text-[11px] text-[#00A651]">+18.4% this week</p>
+                  <p className="text-[10px] sm:text-[11px] text-[#00A651] line-clamp-1">+18.4% this week</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
-                  <p className="text-xs font-semibold text-slate-400">Open Safety Reports</p>
-                  <h3 className="text-2xl font-extrabold text-red-400">
+                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-1">
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-400 line-clamp-1">Safety Reports</p>
+                  <h3 className="text-lg sm:text-2xl font-extrabold text-red-400">
                     {incidents.filter(i => i.status === 'open').length} Urgent
                   </h3>
-                  <p className="text-[11px] text-slate-400">Response SLA &lt; 5 mins</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 line-clamp-1">SLA &lt; 5 mins</p>
                 </div>
               </div>
 
-              {/* Split View: Live Map & Incident Feed */}
-              <div className="grid grid-cols-3 gap-6">
-                <div className="col-span-2 rounded-2xl bg-[#121924] border border-slate-800 p-4 space-y-3">
+              {/* Split View: Live Map & Incident Feed (Stacks on mobile, side-by-side on lg) */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="lg:col-span-2 rounded-2xl bg-[#121924] border border-slate-800 p-3 sm:p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-extrabold text-white">Island Operations Map</h3>
-                    <span className="text-xs text-slate-400">Kingston, Montego Bay & Ocho Rios</span>
+                    <h3 className="text-xs sm:text-sm font-extrabold text-white">Island Operations Map</h3>
+                    <span className="text-[10px] sm:text-xs text-slate-400">Kingston, Montego Bay & Ocho Rios</span>
                   </div>
-                  <div className="h-80 rounded-xl overflow-hidden border border-slate-700/80">
+                  <div className="h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden border border-slate-700/80">
                     <JamaicaLeafletMap
                       pickup={pickupLoc}
                       destination={dropoffLoc}
                       isDark={true}
                       showRoute={true}
+                      driverPosition={currentRide?.driverPosition}
+                      activeStatus={currentRide?.status}
                     />
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-[#121924] border border-slate-800 p-4 space-y-3">
-                  <h3 className="text-sm font-extrabold text-white">Recent Security Logs</h3>
-                  <div className="space-y-2.5">
+                <div className="rounded-2xl bg-[#121924] border border-slate-800 p-3 sm:p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs sm:text-sm font-extrabold text-white">Recent Security Logs</h3>
+                    <span className="text-[10px] text-slate-400">{incidents.length} Logged</span>
+                  </div>
+                  <div className="space-y-2 sm:space-y-2.5 max-h-80 overflow-y-auto pr-1">
                     {incidents.map(inc => (
-                      <div key={inc.id} className="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                      <div key={inc.id} className="p-2.5 sm:p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-red-400 uppercase">{inc.type.replace('_', ' ')}</span>
+                          <span className={`font-bold text-[10px] uppercase ${inc.severity === 'high' ? 'text-red-400' : 'text-amber-400'}`}>
+                            {inc.type.replace('_', ' ')}
+                          </span>
                           <span className="text-[10px] text-slate-500">{inc.timestamp}</span>
                         </div>
                         <p className="text-xs text-slate-300 line-clamp-2">{inc.notes}</p>
@@ -3672,78 +3856,81 @@ export default function App() {
           {/* 2. Driver Verification Queue */}
           {adminScreen === 'verification_queue' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <p className="text-xs text-slate-400">
                   Review statutory documentation for Jamaican drivers and commercial passenger vehicles.
                 </p>
-                <span className="text-xs font-bold text-[#FFD600]">
+                <span className="text-xs font-bold text-[#FFD600] shrink-0">
                   {driver.documents.filter(d => d.status === 'under_review' || d.status === 'pending').length} Pending Inspection
                 </span>
               </div>
 
               <div className="rounded-2xl bg-[#121924] border border-slate-800 overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
-                    <tr>
-                      <th className="p-3.5">Document Name</th>
-                      <th className="p-3.5">Driver</th>
-                      <th className="p-3.5">Issuing Authority</th>
-                      <th className="p-3.5">Expiry Date</th>
-                      <th className="p-3.5">Status</th>
-                      <th className="p-3.5 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800">
-                    {driver.documents.map(doc => (
-                      <tr key={doc.id} className="hover:bg-slate-900/50">
-                        <td className="p-3.5 font-bold text-white">{doc.name}</td>
-                        <td className="p-3.5 text-slate-300">{driver.fullName}</td>
-                        <td className="p-3.5 text-slate-400">{doc.authority}</td>
-                        <td className="p-3.5 font-mono text-slate-300">{doc.expiryDate}</td>
-                        <td className="p-3.5">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            doc.status === 'approved'
-                              ? 'bg-green-950 text-green-300 border border-green-800'
-                              : 'bg-amber-950 text-amber-300 border border-amber-800'
-                          }`}>
-                            {doc.status}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-right">
-                          <button
-                            onClick={() => setAdminInspectionDoc(doc)}
-                            className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
-                          >
-                            Inspect & Verify
-                          </button>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[620px]">
+                    <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
+                      <tr>
+                        <th className="p-3 sm:p-3.5">Document Name</th>
+                        <th className="p-3 sm:p-3.5">Driver</th>
+                        <th className="p-3 sm:p-3.5">Issuing Authority</th>
+                        <th className="p-3 sm:p-3.5">Expiry Date</th>
+                        <th className="p-3 sm:p-3.5">Status</th>
+                        <th className="p-3 sm:p-3.5 text-right">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {driver.documents.map(doc => (
+                        <tr key={doc.id} className="hover:bg-slate-900/50">
+                          <td className="p-3 sm:p-3.5 font-bold text-white">{doc.name}</td>
+                          <td className="p-3 sm:p-3.5 text-slate-300">{driver.fullName}</td>
+                          <td className="p-3 sm:p-3.5 text-slate-400">{doc.authority}</td>
+                          <td className="p-3 sm:p-3.5 font-mono text-slate-300">{doc.expiryDate}</td>
+                          <td className="p-3 sm:p-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                              doc.status === 'approved'
+                                ? 'bg-green-950 text-green-300 border border-green-800'
+                                : 'bg-amber-950 text-amber-300 border border-amber-800'
+                            }`}>
+                              {doc.status}
+                            </span>
+                          </td>
+                          <td className="p-3 sm:p-3.5 text-right">
+                            <button
+                              onClick={() => setAdminInspectionDoc(doc)}
+                              className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold whitespace-nowrap"
+                            >
+                              Inspect & Verify
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+              <p className="sm:hidden text-[10px] text-slate-500 italic text-center">↔ Swipe horizontally to inspect documents</p>
             </div>
           )}
 
           {/* 3. Fare & Market Engine */}
           {adminScreen === 'fares' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <p className="text-xs text-slate-400">
                 Configure base rates, per-kilometer fees, and commission percentages for all Jamaican operating zones.
               </p>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {categories.map(cat => (
-                  <div key={cat.id} className="p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-4">
+                  <div key={cat.id} className="p-4 sm:p-5 rounded-2xl bg-[#121924] border border-slate-800 space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Car className="w-5 h-5 text-[#00A651]" />
-                        <h3 className="font-extrabold text-base text-white">{cat.name} Tier</h3>
+                        <h3 className="font-extrabold text-sm sm:text-base text-white">{cat.name} Tier</h3>
                       </div>
                       <span className="text-xs font-bold text-[#FFD600]">Commission: 15%</span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs">
                       <div>
                         <label className="text-slate-400 font-semibold block mb-1">Base Fare (JMD)</label>
                         <input
@@ -3810,86 +3997,91 @@ export default function App() {
           {/* 4. Financial Audit Ledger */}
           {adminScreen === 'ledger' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <p className="text-xs text-slate-400">
                   Double-entry immutable audit ledger of trip charges, cash reconciliations, and driver earnings.
                 </p>
                 <button
                   onClick={() => showToast('Ledger exported as CSV for Tax Administration Jamaica (TAJ) audit.')}
-                  className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white flex items-center justify-center gap-1.5 self-start sm:self-auto"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-[#00A651]" />
-                  Export TAJ Audit Sheet
+                  <span>Export TAJ Audit Sheet</span>
                 </button>
               </div>
 
               <div className="rounded-2xl bg-[#121924] border border-slate-800 overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
-                    <tr>
-                      <th className="p-3.5">Entry ID</th>
-                      <th className="p-3.5">Timestamp</th>
-                      <th className="p-3.5">Description</th>
-                      <th className="p-3.5">Gross (JMD)</th>
-                      <th className="p-3.5">Commission (15%)</th>
-                      <th className="p-3.5">Driver Net</th>
-                      <th className="p-3.5">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800">
-                    {ledger.map(row => (
-                      <tr key={row.id} className="hover:bg-slate-900/50">
-                        <td className="p-3.5 font-mono text-slate-400">{row.id}</td>
-                        <td className="p-3.5 text-slate-300">{row.timestamp}</td>
-                        <td className="p-3.5 font-bold text-white">{row.description}</td>
-                        <td className="p-3.5 font-bold text-white">${row.grossAmountJMD.toLocaleString()}</td>
-                        <td className="p-3.5 text-[#FFD600]">${row.platformCommissionJMD.toLocaleString()}</td>
-                        <td className="p-3.5 text-[#00A651] font-bold">${row.driverNetJMD.toLocaleString()}</td>
-                        <td className="p-3.5">
-                          <span className="px-2 py-0.5 rounded-full bg-green-950 text-green-300 text-[10px] font-bold uppercase">
-                            {row.status}
-                          </span>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[700px]">
+                    <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
+                      <tr>
+                        <th className="p-3 sm:p-3.5">Entry ID</th>
+                        <th className="p-3 sm:p-3.5">Timestamp</th>
+                        <th className="p-3 sm:p-3.5">Description</th>
+                        <th className="p-3 sm:p-3.5">Gross (JMD)</th>
+                        <th className="p-3 sm:p-3.5">Commission (15%)</th>
+                        <th className="p-3 sm:p-3.5">Driver Net</th>
+                        <th className="p-3 sm:p-3.5">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {ledger.map(row => (
+                        <tr key={row.id} className="hover:bg-slate-900/50">
+                          <td className="p-3 sm:p-3.5 font-mono text-slate-400">{row.id}</td>
+                          <td className="p-3 sm:p-3.5 text-slate-300">{row.timestamp}</td>
+                          <td className="p-3 sm:p-3.5 font-bold text-white">{row.description}</td>
+                          <td className="p-3 sm:p-3.5 font-bold text-white">${row.grossAmountJMD.toLocaleString()}</td>
+                          <td className="p-3 sm:p-3.5 text-[#FFD600]">${row.platformCommissionJMD.toLocaleString()}</td>
+                          <td className="p-3 sm:p-3.5 text-[#00A651] font-bold">${row.driverNetJMD.toLocaleString()}</td>
+                          <td className="p-3 sm:p-3.5">
+                            <span className="px-2 py-0.5 rounded-full bg-green-950 text-green-300 text-[10px] font-bold uppercase">
+                              {row.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+              <p className="sm:hidden text-[10px] text-slate-500 italic text-center">↔ Swipe horizontally to view full ledger figures</p>
             </div>
           )}
 
           {/* 5. Live Dispatch Operations Screen */}
           {adminScreen === 'live_dispatch' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <p className="text-xs text-slate-400">
                   Real-time monitor of dispatch requests, driver location beacons, and trip states.
                 </p>
                 <button
                   onClick={() => handleRequestRide()}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#00A651] text-white text-xs font-bold hover:bg-green-600 shadow-md"
+                  className="px-3.5 py-1.5 rounded-xl bg-[#00A651] text-white text-xs font-bold hover:bg-green-600 shadow-md self-start sm:self-auto"
                 >
                   Inject Synthetic Test Ride 🚀
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-6">
-                <div className="col-span-2 rounded-2xl bg-[#121924] border border-slate-800 p-4 space-y-3">
-                  <h3 className="text-sm font-extrabold text-white">Live Real-time Dispatch Map</h3>
-                  <div className="h-96 rounded-xl overflow-hidden border border-slate-700/80">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="lg:col-span-2 rounded-2xl bg-[#121924] border border-slate-800 p-3 sm:p-4 space-y-3">
+                  <h3 className="text-xs sm:text-sm font-extrabold text-white">Live Real-time Dispatch Map</h3>
+                  <div className="h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden border border-slate-700/80">
                     <JamaicaLeafletMap
                       pickup={pickupLoc}
                       destination={dropoffLoc}
                       isDark={true}
                       showRoute={true}
+                      driverPosition={currentRide?.driverPosition}
+                      activeStatus={currentRide?.status}
                     />
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-[#121924] border border-slate-800 p-4 space-y-3">
-                  <h3 className="text-sm font-extrabold text-white">Active Dispatch State</h3>
+                <div className="rounded-2xl bg-[#121924] border border-slate-800 p-3 sm:p-4 space-y-3">
+                  <h3 className="text-xs sm:text-sm font-extrabold text-white">Active Dispatch State</h3>
                   {currentRide ? (
-                    <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="px-2.5 py-0.5 rounded-full bg-[#00A651] text-white text-[10px] font-extrabold">
                           {currentRide.status}
@@ -3906,20 +4098,20 @@ export default function App() {
                       <div className="flex gap-2 pt-2">
                         <button
                           onClick={handleCompleteTrip}
-                          className="flex-1 py-1.5 rounded-lg bg-[#00A651] text-white text-xs font-bold"
+                          className="flex-1 py-1.5 rounded-lg bg-[#00A651] text-white text-xs font-bold hover:bg-green-600"
                         >
                           Force Complete
                         </button>
                         <button
                           onClick={() => handleCancelRide()}
-                          className="flex-1 py-1.5 rounded-lg bg-red-900/60 text-red-300 text-xs font-bold"
+                          className="flex-1 py-1.5 rounded-lg bg-red-900/60 text-red-300 text-xs font-bold hover:bg-red-800/80"
                         >
                           Abort
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center py-12 text-slate-500 text-xs">
+                    <div className="text-center py-10 sm:py-12 text-slate-500 text-xs">
                       No active rides in dispatch queue.
                     </div>
                   )}
@@ -3931,15 +4123,15 @@ export default function App() {
           {/* 6. Fleet & Driver Records */}
           {adminScreen === 'drivers' && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {driversList.map(d => (
-                  <div key={d.id} className="p-4 rounded-2xl bg-[#121924] border border-slate-800 space-y-3">
+                  <div key={d.id} className="p-3.5 sm:p-4 rounded-2xl bg-[#121924] border border-slate-800 space-y-3">
                     <div className="flex items-center gap-3">
-                      <img src={d.photo} alt={d.fullName} className="w-12 h-12 rounded-full object-cover border-2 border-[#00A651]" />
+                      <img src={d.photo} alt={d.fullName} className="w-12 h-12 rounded-full object-cover border-2 border-[#00A651] shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-extrabold text-sm text-white">{d.fullName}</h4>
-                        <p className="text-xs text-slate-400">{d.phone} • {d.operatingZone}</p>
-                        <div className="flex items-center gap-2 mt-1">
+                        <h4 className="font-extrabold text-sm text-white truncate">{d.fullName}</h4>
+                        <p className="text-xs text-slate-400 truncate">{d.phone} • {d.operatingZone}</p>
+                        <div className="flex items-center gap-1.5 sm:gap-2 mt-1 flex-wrap">
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
                             {d.currentVehicle.make} {d.currentVehicle.model} ({d.currentVehicle.plate})
                           </span>
@@ -3951,10 +4143,10 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="pt-2 border-t border-slate-800 flex justify-between text-xs text-slate-400">
+                    <div className="pt-2 border-t border-slate-800 flex justify-between text-[11px] sm:text-xs text-slate-400">
                       <span>Rating: {d.rating}★</span>
                       <span>Trips: {d.totalTrips}</span>
-                      <span>Payout Acct: {d.payoutAccount.bank}</span>
+                      <span className="truncate max-w-[120px]">Bank: {d.payoutAccount.bank}</span>
                     </div>
                   </div>
                 ))}
@@ -3966,57 +4158,62 @@ export default function App() {
           {adminScreen === 'safety_incidents' && (
             <div className="space-y-4">
               <div className="rounded-2xl bg-[#121924] border border-slate-800 overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
-                    <tr>
-                      <th className="p-3.5">ID</th>
-                      <th className="p-3.5">Severity</th>
-                      <th className="p-3.5">Category</th>
-                      <th className="p-3.5">Reporter</th>
-                      <th className="p-3.5">Timestamp</th>
-                      <th className="p-3.5">Status</th>
-                      <th className="p-3.5 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800">
-                    {incidents.map(inc => (
-                      <tr key={inc.id} className="hover:bg-slate-900/50">
-                        <td className="p-3.5 font-mono text-slate-400">{inc.id}</td>
-                        <td className="p-3.5">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            inc.severity === 'high' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-amber-950 text-amber-300'
-                          }`}>
-                            {inc.severity}
-                          </span>
-                        </td>
-                        <td className="p-3.5 font-bold text-white capitalize">{inc.type.replace('_', ' ')}</td>
-                        <td className="p-3.5 text-slate-300">{inc.reporterName}</td>
-                        <td className="p-3.5 text-slate-400">{inc.timestamp}</td>
-                        <td className="p-3.5">
-                          <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold">
-                            {inc.status}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-right">
-                          <button
-                            onClick={() => {
-                              const res = prompt('Enter incident resolution notes:', inc.notes);
-                              if (res) {
-                                setIncidents(prev =>
-                                  prev.map(i => (i.id === inc.id ? { ...i, status: 'resolved', resolution: res } : i))
-                                );
-                              }
-                            }}
-                            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200"
-                          >
-                            Resolve
-                          </button>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[620px]">
+                    <thead className="bg-slate-900 text-slate-400 border-b border-slate-800">
+                      <tr>
+                        <th className="p-3 sm:p-3.5">ID</th>
+                        <th className="p-3 sm:p-3.5">Severity</th>
+                        <th className="p-3 sm:p-3.5">Category</th>
+                        <th className="p-3 sm:p-3.5">Reporter</th>
+                        <th className="p-3 sm:p-3.5">Timestamp</th>
+                        <th className="p-3 sm:p-3.5">Status</th>
+                        <th className="p-3 sm:p-3.5 text-right">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {incidents.map(inc => (
+                        <tr key={inc.id} className="hover:bg-slate-900/50">
+                          <td className="p-3 sm:p-3.5 font-mono text-slate-400">{inc.id}</td>
+                          <td className="p-3 sm:p-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                              inc.severity === 'high' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-amber-950 text-amber-300'
+                            }`}>
+                              {inc.severity}
+                            </span>
+                          </td>
+                          <td className="p-3 sm:p-3.5 font-bold text-white capitalize">{inc.type.replace('_', ' ')}</td>
+                          <td className="p-3 sm:p-3.5 text-slate-300">{inc.reporterName}</td>
+                          <td className="p-3 sm:p-3.5 text-slate-400">{inc.timestamp}</td>
+                          <td className="p-3 sm:p-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              inc.status === 'resolved' ? 'bg-green-950 text-green-300' : 'bg-slate-800 text-slate-300'
+                            }`}>
+                              {inc.status}
+                            </span>
+                          </td>
+                          <td className="p-3 sm:p-3.5 text-right">
+                            {inc.status === 'open' || inc.status === 'investigating' ? (
+                              <button
+                                onClick={() => {
+                                  setResolvingIncident(inc);
+                                  setIncidentResolutionNote(inc.resolution || '');
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200"
+                              >
+                                Resolve
+                              </button>
+                            ) : (
+                              <span className="text-[10px] text-slate-500 font-semibold">Resolved</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+              <p className="sm:hidden text-[10px] text-slate-500 italic text-center">↔ Swipe horizontally to view incident records</p>
             </div>
           )}
         </div>
@@ -4074,106 +4271,181 @@ export default function App() {
       )}
 
       {/* Sleek Floating Demo Quick-Switch Bar for Client Presentations */}
-      <aside aria-label="Demo Role Switcher" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[800] bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700 shadow-2xl flex items-center gap-2 text-xs font-semibold">
-        <span className="text-[10px] uppercase font-bold text-slate-400 px-1 hidden sm:inline">Role Switcher:</span>
-        <button
-          onClick={() => navigateTo('passenger')}
-          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
-            currentRole === 'passenger' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <Smartphone className="w-3.5 h-3.5" />
-          <span>Customer</span>
-        </button>
-        <button
-          onClick={() => {
-            setDriver(prev => ({
-              ...prev,
-              status: 'active',
-              isOnline: true,
-              documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
-                ...d,
-                status: 'approved',
-                reviewedBy: 'Compliance Admin (Sarah)',
-                reviewedAt: '2026-10-15',
-              })),
-            }));
-            navigateTo('driver');
-          }}
-          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
-            currentRole === 'driver' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <Car className="w-3.5 h-3.5" />
-          <span>Driver App</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-pulse" />
-        </button>
-        <button
-          onClick={() => navigateTo('admin')}
-          className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 ${
-            currentRole === 'admin' ? 'bg-slate-700 text-white shadow' : 'text-slate-300 hover:text-white'
-          }`}
-        >
-          <Building className="w-3.5 h-3.5" />
-          <span>Admin</span>
-        </button>
-        <div className="w-[1px] h-4 bg-slate-700 mx-0.5 hidden sm:block" />
+      {(() => {
+        const isBottomNavScreen = currentRole !== 'admin' && (
+          currentRole === 'driver' || 
+          passengerScreen === 'home' || 
+          passengerScreen === 'activity' || 
+          passengerScreen === 'wallet' || 
+          passengerScreen === 'account' ||
+          passengerScreen === 'choose_ride' ||
+          passengerScreen === 'finding_driver' ||
+          passengerScreen === 'driver_approaching' ||
+          passengerScreen === 'in_trip' ||
+          passengerScreen === 'trip_completed'
+        );
 
-        {/* Live Simulation Tracking Pill */}
-        {currentRide?.status === 'DRIVER_ARRIVING' && (
-          <div className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/30 px-2.5 py-1 rounded-full text-yellow-300 text-[11px] font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
-            <span>Car Arriving: {Math.round(simProgress)}%</span>
+        if (demoBarMinimized) {
+          return (
             <button
-              onClick={handleFastForwardArrival}
-              className="text-[#00A651] font-extrabold hover:text-white underline ml-1 text-[10px]"
-              title="Skip animation directly to pickup arrival"
+              onClick={() => setDemoBarMinimized(false)}
+              title="Expand Demo Switcher Bar"
+              className={`fixed ${
+                demoBarPosition === 'top'
+                  ? 'top-3'
+                  : isBottomNavScreen
+                    ? 'bottom-[76px]'
+                    : 'bottom-4'
+              } right-3 z-[850] bg-slate-900/95 hover:bg-slate-800 text-white px-3 py-1.5 rounded-full border border-slate-700/90 shadow-2xl flex items-center gap-2 text-xs font-semibold backdrop-blur-md active:scale-95 transition-all`}
             >
-              Arrive Now ⚡
+              <Sparkles className="w-3.5 h-3.5 text-[#FFD600]" />
+              <span className="hidden sm:inline text-slate-300">Demo Role:</span>
+              <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] text-[#00A651] font-black uppercase tracking-wider">
+                {currentRole}
+              </span>
+              <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
             </button>
-          </div>
-        )}
+          );
+        }
 
-        {currentRide?.status === 'IN_PROGRESS' && (
-          <div className="flex items-center gap-1.5 bg-[#00A651]/10 border border-[#00A651]/30 px-2.5 py-1 rounded-full text-green-300 text-[11px] font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-ping" />
-            <span>In Trip: {Math.round(simProgress)}%</span>
+        return (
+          <aside
+            aria-label="Demo Role Switcher"
+            className={`fixed ${
+              demoBarPosition === 'top'
+                ? 'top-3 sm:top-4'
+                : isBottomNavScreen
+                  ? 'bottom-[76px] sm:bottom-[76px]'
+                  : 'bottom-4'
+            } left-1/2 -translate-x-1/2 z-[850] max-w-[calc(100vw-20px)] bg-slate-900/95 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-slate-700/90 shadow-2xl flex items-center gap-1.5 text-xs font-semibold overflow-x-auto no-scrollbar animate-in fade-in duration-200`}
+          >
+            <span className="text-[10px] uppercase font-bold text-slate-400 px-1 hidden md:inline shrink-0">Role:</span>
+            
             <button
-              onClick={handleFastForwardTrip}
-              className="text-yellow-400 font-extrabold hover:text-white underline ml-1 text-[10px]"
-              title="Skip animation directly to dropoff completion"
+              onClick={() => navigateTo('passenger')}
+              className={`px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 shrink-0 ${
+                currentRole === 'passenger' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
+              }`}
             >
-              Complete Trip 🏁
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Customer</span>
             </button>
-          </div>
-        )}
 
-        <button
-          onClick={() => {
-            setCurrentRide(null);
-            localStorage.removeItem('rideja_active_ride');
-            broadcastSync('SYNC_RIDE', null);
-            setDriver(prev => ({
-              ...prev,
-              status: 'active',
-              isOnline: true,
-              documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
-                ...d,
-                status: 'approved',
-                reviewedBy: 'Compliance Admin (Sarah)',
-                reviewedAt: '2026-10-15',
-              })),
-            }));
-            setPassengerScreen('home');
-            showToast('Demo reset: All 7 documents up to date, Driver Online & ready');
-          }}
-          title="Reset ride & ensure driver documents are valid"
-          className="px-2.5 py-1 rounded-full text-slate-400 hover:text-[#FFD600] transition-colors flex items-center gap-1 text-[11px]"
-        >
-          <RefreshCw className="w-3 h-3" />
-          <span className="hidden sm:inline">Reset Demo</span>
-        </button>
-      </aside>
+            <button
+              onClick={() => {
+                setDriver(prev => ({
+                  ...prev,
+                  status: 'active',
+                  isOnline: true,
+                  documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
+                    ...d,
+                    status: 'approved',
+                    reviewedBy: 'Compliance Admin (Sarah)',
+                    reviewedAt: '2026-10-15',
+                  })),
+                }));
+                navigateTo('driver');
+              }}
+              className={`px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 shrink-0 ${
+                currentRole === 'driver' ? 'bg-[#00A651] text-white shadow' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              <Car className="w-3.5 h-3.5" />
+              <span>Driver</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-pulse" />
+            </button>
+
+            <button
+              onClick={() => navigateTo('admin')}
+              className={`px-2.5 py-1 rounded-full transition-colors flex items-center gap-1 shrink-0 ${
+                currentRole === 'admin' ? 'bg-slate-700 text-white shadow' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              <Building className="w-3.5 h-3.5" />
+              <span>Admin</span>
+            </button>
+
+            <div className="w-[1px] h-4 bg-slate-700 mx-0.5 shrink-0" />
+
+            {/* Live Simulation Tracking Pill */}
+            {currentRide?.status === 'DRIVER_ARRIVING' && (
+              <div className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/30 px-2.5 py-0.5 rounded-full text-yellow-300 text-[11px] font-bold shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
+                <span className="hidden sm:inline">Car Arriving: {Math.round(simProgress)}%</span>
+                <button
+                  onClick={handleFastForwardArrival}
+                  className="text-[#00A651] font-extrabold hover:text-white underline ml-1 text-[10px]"
+                  title="Skip animation directly to pickup arrival"
+                >
+                  Arrive Now ⚡
+                </button>
+              </div>
+            )}
+
+            {currentRide?.status === 'IN_PROGRESS' && (
+              <div className="flex items-center gap-1.5 bg-[#00A651]/10 border border-[#00A651]/30 px-2.5 py-0.5 rounded-full text-green-300 text-[11px] font-bold shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-ping" />
+                <span className="hidden sm:inline">In Trip: {Math.round(simProgress)}%</span>
+                <button
+                  onClick={handleFastForwardTrip}
+                  className="text-yellow-400 font-extrabold hover:text-white underline ml-1 text-[10px]"
+                  title="Skip animation directly to dropoff completion"
+                >
+                  Complete 🏁
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                setCurrentRide(null);
+                localStorage.removeItem('rideja_active_ride');
+                broadcastSync('SYNC_RIDE', null);
+                setDriver(prev => ({
+                  ...prev,
+                  status: 'active',
+                  isOnline: true,
+                  documents: INITIAL_DRIVER_DOCUMENTS.map(d => ({
+                    ...d,
+                    status: 'approved',
+                    reviewedBy: 'Compliance Admin (Sarah)',
+                    reviewedAt: '2026-10-15',
+                  })),
+                }));
+                setPassengerScreen('home');
+                showToast('Demo reset: All 7 documents up to date, Driver Online & ready');
+              }}
+              title="Reset ride & ensure driver documents are valid"
+              className="px-2 py-1 rounded-full text-slate-400 hover:text-[#FFD600] transition-colors flex items-center gap-1 text-[11px] shrink-0"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
+
+            <div className="w-[1px] h-4 bg-slate-700 mx-0.5 shrink-0" />
+
+            {/* Position Flip Button (Top ⬍ Bottom) */}
+            <button
+              onClick={() => setDemoBarPosition(prev => prev === 'bottom' ? 'top' : 'bottom')}
+              title={demoBarPosition === 'bottom' ? 'Dock demo bar to Top' : 'Dock demo bar to Bottom'}
+              className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
+              aria-label="Toggle demo bar position"
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Minimize Button */}
+            <button
+              onClick={() => setDemoBarMinimized(true)}
+              title="Minimize demo switcher bar (unblock view)"
+              className="p-1 rounded-full text-slate-400 hover:text-[#FFD600] hover:bg-slate-800 transition-colors shrink-0"
+              aria-label="Minimize demo switcher bar"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+          </aside>
+        );
+      })()}
 
 
 
@@ -4367,6 +4639,82 @@ export default function App() {
                 className="flex-1 py-3 rounded-2xl bg-red-900/60 hover:bg-red-800 text-red-200 font-extrabold text-xs transition-all active:scale-[0.98]"
               >
                 Reject / Request Resubmission
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Safety Incident Resolution Modal */}
+      {resolvingIncident && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl p-6 text-white space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${resolvingIncident.severity === 'high' ? 'bg-red-500 animate-ping' : 'bg-amber-400'}`} />
+                <h3 className="font-extrabold text-base">Resolve Incident #{resolvingIncident.id}</h3>
+              </div>
+              <button onClick={() => setResolvingIncident(null)} className="p-1 text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Type:</span>
+                <span className="font-semibold text-slate-200 capitalize">{resolvingIncident.type.replace('_', ' ')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Reporter:</span>
+                <span className="font-medium text-slate-200">{resolvingIncident.reporterName} ({resolvingIncident.reportedBy})</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Trip Ref:</span>
+                <span className="font-mono text-slate-300">{resolvingIncident.tripId}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Reported At:</span>
+                <span className="font-mono text-slate-300">{resolvingIncident.timestamp}</span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">Resolution & Dispatch Notes</label>
+              <textarea
+                value={incidentResolutionNote}
+                onChange={e => setIncidentResolutionNote(e.target.value)}
+                placeholder="Enter actions taken, officer unit badge #, or reason for closure..."
+                rows={3}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-[#00A651]"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setResolvingIncident(null)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setIncidents(prev =>
+                    prev.map(i =>
+                      i.id === resolvingIncident.id
+                        ? {
+                            ...i,
+                            status: 'resolved',
+                            notes: incidentResolutionNote.trim() || 'Resolved by super admin Marcus',
+                          }
+                        : i
+                    )
+                  );
+                  showToast(`Incident #${resolvingIncident.id} closed & logged.`);
+                  setResolvingIncident(null);
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-[#00A651] hover:bg-green-600 text-white font-extrabold text-xs transition-colors shadow-md"
+              >
+                Confirm Resolution
               </button>
             </div>
           </div>
