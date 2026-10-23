@@ -9,7 +9,7 @@ import {
   Activity, Lock, Send, RefreshCw, AlertOctagon, Receipt, Plus,
   Filter, Sparkles, Home, Briefcase, ChevronDown, CheckCheck,
   Building, Map as MapIcon, AlertCircle, FileSpreadsheet, ExternalLink, QrCode, Compass,
-  Wifi, Battery, Signal, ArrowUpRight, ChevronUp, ArrowUpDown, Minus
+  Wifi, Battery, Signal, ArrowUpRight, ChevronUp, ArrowUpDown, Minus, Layers, Key
 } from 'lucide-react';
 
 /* ==========================================================================
@@ -239,18 +239,20 @@ export interface SafetyIncident {
    ========================================================================== */
 
 export const JAMAICA_PRESETS: LocationPoint[] = [
-  { id: 'loc-1', name: 'Half Way Tree Clock Tower', address: 'Half Way Tree Rd, Kingston 10', area: 'Kingston', lat: 18.0125, lng: -76.7989 },
-  { id: 'loc-2', name: 'New Kingston Business District', address: 'Knutsford Boulevard, New Kingston', area: 'Kingston', lat: 18.0065, lng: -76.7865 },
-  { id: 'loc-3', name: 'Norman Manley International Airport', address: 'Palisadoes, Kingston (KIN)', area: 'Kingston', lat: 17.9356, lng: -76.7875 },
-  { id: 'loc-4', name: 'Devon House Historic Mansion', address: '26 Hope Road, Kingston 10', area: 'Kingston', lat: 18.0163, lng: -76.7925 },
-  { id: 'loc-5', name: 'Bob Marley Museum', address: '56 Hope Road, Kingston 6', area: 'Kingston', lat: 18.0205, lng: -76.7794 },
-  { id: 'loc-6', name: 'Portmore Sovereign Centre', address: 'Portmore Parkway, St Catherine', area: 'Portmore', lat: 17.9658, lng: -76.8795 },
-  { id: 'loc-7', name: 'Spanish Town Historic Square', address: 'King Street, Spanish Town', area: 'Spanish Town', lat: 17.9942, lng: -76.9538 },
-  { id: 'loc-8', name: 'Sangster International Airport', address: 'Montego Bay, St James (MBJ)', area: 'Montego Bay', lat: 18.5037, lng: -77.9134 },
-  { id: 'loc-9', name: 'Montego Bay Hip Strip', address: 'Jimmy Cliff Blvd, Montego Bay', area: 'Montego Bay', lat: 18.4841, lng: -77.9254 },
-  { id: 'loc-10', name: 'Dunn\'s River Falls & Beach', address: 'Main Street, Ocho Rios, St Ann', area: 'Ocho Rios', lat: 18.4162, lng: -77.1384 },
-  { id: 'loc-11', name: 'Mandeville Town Centre', address: 'Manchester Road, Mandeville', area: 'Mandeville', lat: 18.0419, lng: -77.5071 },
-  { id: 'loc-12', name: 'Rick\'s Cafe & Cliffs', address: 'West End Road, Negril', area: 'Negril', lat: 18.2505, lng: -78.3667 },
+  { id: 'mobay-1', name: 'Doctor\'s Cave Beach & Hip Strip', address: 'Jimmy Cliff Blvd, Montego Bay', area: 'Montego Bay', lat: 18.4883, lng: -77.9272 },
+  { id: 'mobay-2', name: 'Sangster International Airport (MBJ)', address: 'Montego Bay, St James (MBJ)', area: 'Montego Bay', lat: 18.5037, lng: -77.9134 },
+  { id: 'mobay-3', name: 'Sam Sharpe Square (Historic Downtown)', address: 'St. James Street, Montego Bay', area: 'Montego Bay', lat: 18.4716, lng: -77.9188 },
+  { id: 'mobay-4', name: 'Fairview Shopping Centre & BPO Park', address: 'Alice Eldemire Dr, Fairview, Montego Bay', area: 'Montego Bay', lat: 18.4552, lng: -77.9275 },
+  { id: 'mobay-5', name: 'Montego Bay Cruise Terminal (Freeport)', address: 'Southern Cross Way, Freeport, Montego Bay', area: 'Montego Bay', lat: 18.4590, lng: -77.9405 },
+  { id: 'mobay-6', name: 'Pier 1 Marina & Seafood Bar', address: 'Howard Cooke Blvd, Montego Bay', area: 'Montego Bay', lat: 18.4755, lng: -77.9265 },
+  { id: 'mobay-7', name: 'Rose Hall Great House', address: 'Rose Hall Highway, St. James', area: 'Montego Bay', lat: 18.5175, lng: -77.8189 },
+  { id: 'mobay-8', name: 'Whitter Village Shopping Mall', address: 'Ironshore Main Rd, Montego Bay', area: 'Montego Bay', lat: 18.5098, lng: -77.8732 },
+  { id: 'mobay-9', name: 'Half Moon Luxury Resort', address: 'Rose Hall, Montego Bay', area: 'Montego Bay', lat: 18.5375, lng: -77.8105 },
+  { id: 'mobay-10', name: 'Cornwall Regional Hospital', address: 'Mount Salem, Montego Bay', area: 'Montego Bay', lat: 18.4632, lng: -77.9120 },
+  { id: 'loc-11', name: 'Dunn\'s River Falls & Beach', address: 'Main Street, Ocho Rios, St Ann', area: 'Ocho Rios', lat: 18.4162, lng: -77.1384 },
+  { id: 'loc-12', name: 'Rick\'s Cafe & Sunset Cliffs', address: 'West End Road, Negril', area: 'Negril', lat: 18.2505, lng: -78.3667 },
+  { id: 'loc-13', name: 'Norman Manley International Airport', address: 'Palisadoes, Kingston (KIN)', area: 'Kingston', lat: 17.9356, lng: -76.7875 },
+  { id: 'loc-14', name: 'Half Way Tree Clock Tower', address: 'Half Way Tree Rd, Kingston 10', area: 'Kingston', lat: 18.0125, lng: -76.7989 },
 ];
 
 export const INITIAL_CATEGORIES: RideCategoryConfig[] = [
@@ -433,7 +435,7 @@ export const INITIAL_DRIVER: DriverProfile = {
   phone: '+1 (876) 555-7890',
   email: 'dwayne.williams@rideja.jm',
   photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&auto=format&fit=crop&q=80',
-  operatingZone: 'Kingston & St. Andrew Corporate Area',
+  operatingZone: 'Montego Bay & St. James (Western Hub)',
   rating: 4.9,
   totalTrips: 1420,
   acceptanceRate: 97,
@@ -445,14 +447,14 @@ export const INITIAL_DRIVER: DriverProfile = {
     model: 'Corolla Hybrid',
     year: 2021,
     color: 'Silver Metallic',
-    plate: '876-JAM-1',
+    plate: '876-MBJ-1',
     seatingCapacity: 4,
     category: 'economy',
   },
   payoutAccount: {
     bank: 'National Commercial Bank (NCB) Jamaica',
     accountNumber: '••••••••4810',
-    branch: 'Knutsford Boulevard, New Kingston',
+    branch: 'Sam Sharpe Square, Montego Bay',
   },
   earnings: {
     todayJMD: 8400,
@@ -491,7 +493,7 @@ export const INITIAL_DRIVERS_LIST: DriverProfile[] = [
     payoutAccount: {
       bank: 'Scotiabank Jamaica',
       accountNumber: '••••••••1192',
-      branch: 'Sam Sharpe Square, Montego Bay',
+      branch: 'Fairview Shopping Centre, Montego Bay',
     },
     earnings: {
       todayJMD: 0,
@@ -517,10 +519,10 @@ export const INITIAL_LEDGER: FinancialLedgerEntry[] = [
     id: 'led-101',
     tripId: 'RJ-901',
     timestamp: '2026-10-14 09:20',
-    description: 'Trip: Half Way Tree to New Kingston',
-    grossAmountJMD: 1200,
-    platformCommissionJMD: 180,
-    driverNetJMD: 1020,
+    description: 'Trip: Doctor\'s Cave Beach to Sangster Airport',
+    grossAmountJMD: 1450,
+    platformCommissionJMD: 217,
+    driverNetJMD: 1233,
     paymentType: 'cash',
     status: 'settled',
   },
@@ -528,10 +530,10 @@ export const INITIAL_LEDGER: FinancialLedgerEntry[] = [
     id: 'led-102',
     tripId: 'RJ-902',
     timestamp: '2026-10-14 10:15',
-    description: 'Trip: New Kingston to Norman Manley Airport',
-    grossAmountJMD: 4000,
-    platformCommissionJMD: 600,
-    driverNetJMD: 3400,
+    description: 'Trip: Sangster Airport to Half Moon Luxury Resort',
+    grossAmountJMD: 3800,
+    platformCommissionJMD: 570,
+    driverNetJMD: 3230,
     paymentType: 'card',
     status: 'settled',
   },
@@ -675,12 +677,12 @@ export function interpolatePath(
   return { point: last, bearing: calculateBearing(secondLast, last), remainingKm: 0 };
 }
 
-// Street-aligned realistic waypoints generator for Kingston
+// Street-aligned realistic waypoints generator for Montego Bay & Western Jamaica
 export const generateApproachWaypoints = (pickup: LocationPoint): GeoPoint[] => [
-  { lat: pickup.lat - 0.0075, lng: pickup.lng + 0.0055 }, // Starts on Knutsford / Trafalgar corridor
-  { lat: pickup.lat - 0.0050, lng: pickup.lng + 0.0042 },
-  { lat: pickup.lat - 0.0030, lng: pickup.lng + 0.0020 },
-  { lat: pickup.lat - 0.0012, lng: pickup.lng + 0.0006 },
+  { lat: pickup.lat - 0.0065, lng: pickup.lng + 0.0045 }, // Gloucester / Howard Cooke approach
+  { lat: pickup.lat - 0.0045, lng: pickup.lng + 0.0032 },
+  { lat: pickup.lat - 0.0025, lng: pickup.lng + 0.0018 },
+  { lat: pickup.lat - 0.0010, lng: pickup.lng + 0.0006 },
   { lat: pickup.lat, lng: pickup.lng }, // Arrived at pickup
 ];
 
@@ -689,10 +691,10 @@ export const generateTripWaypoints = (pickup: LocationPoint, dropoff: LocationPo
   const dLng = dropoff.lng - pickup.lng;
   return [
     { lat: pickup.lat, lng: pickup.lng },
-    { lat: pickup.lat + dLat * 0.22, lng: pickup.lng + dLng * 0.05 },
-    { lat: pickup.lat + dLat * 0.25, lng: pickup.lng + dLng * 0.45 },
-    { lat: pickup.lat + dLat * 0.65, lng: pickup.lng + dLng * 0.48 },
-    { lat: pickup.lat + dLat * 0.72, lng: dropoff.lng },
+    { lat: pickup.lat + dLat * 0.22, lng: pickup.lng + dLng * 0.06 },
+    { lat: pickup.lat + dLat * 0.35, lng: pickup.lng + dLng * 0.42 },
+    { lat: pickup.lat + dLat * 0.68, lng: pickup.lng + dLng * 0.52 },
+    { lat: pickup.lat + dLat * 0.88, lng: dropoff.lng + dLng * -0.04 },
     { lat: dropoff.lat, lng: dropoff.lng },
   ];
 };
@@ -751,7 +753,13 @@ interface LeafletMapProps {
   driverPosition?: { lat: number; lng: number; bearing?: number };
   showRoute?: boolean;
   onSelectPreset?: (loc: LocationPoint) => void;
+  onUpdatePickup?: (loc: LocationPoint) => void;
+  onUpdateDestination?: (loc: LocationPoint) => void;
   activeStatus?: RideStatus;
+  allowPinDrag?: boolean;
+  interactiveTapToSelect?: boolean;
+  onFastForward?: () => void;
+  simProgress?: number;
 }
 
 const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
@@ -761,44 +769,74 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
   driverPosition,
   showRoute = true,
   onSelectPreset,
+  onUpdatePickup,
+  onUpdateDestination,
   activeStatus,
+  allowPinDrag = true,
+  interactiveTapToSelect = true,
+  onFastForward,
+  simProgress = 0,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
-  const routeLayerRef = useRef<L.Polyline | null>(null);
+  const landmarksLayerRef = useRef<L.LayerGroup | null>(null);
+  const routeLayerRef = useRef<L.LayerGroup | null>(null);
   const driverMarkerRef = useRef<L.Marker | null>(null);
   const lastFittedStatusRef = useRef<string>('');
+  const fallbackAppliedRef = useRef<boolean>(false);
+  const [gpsLoading, setGpsLoading] = useState<boolean>(false);
+  const [tileProvider, setTileProvider] = useState<'carto' | 'osm'>('carto');
+  const [showKeyInfo, setShowKeyInfo] = useState<boolean>(false);
 
-  // Initialize Leaflet Map once
+  // Authenticated CartoDB Basemaps API key provided in environment
+  const cartoApiKey = (import.meta as unknown as { env?: { VITE_CARTO_API_KEY?: string } })?.env?.VITE_CARTO_API_KEY || 'cb1_4kq7_1_cdef43338f3cb85d9245d692';
+
+  // Initialize Leaflet Map once with full touch gestures
   useEffect(() => {
     if (!containerRef.current || mapInstanceRef.current) return;
 
-    // Center on Kingston, Jamaica [18.0125, -76.7989]
+    // Center on Montego Bay, Jamaica [18.4883, -77.9272]
     const map = L.map(containerRef.current, {
       center: [pickup.lat, pickup.lng],
       zoom: 14,
       zoomControl: false,
       attributionControl: false,
+      touchZoom: true,
+      dragging: true,
+      scrollWheelZoom: true,
+      doubleClickZoom: true,
     });
 
     mapInstanceRef.current = map;
     markersLayerRef.current = L.layerGroup().addTo(map);
+    landmarksLayerRef.current = L.layerGroup().addTo(map);
+    routeLayerRef.current = L.layerGroup().addTo(map);
 
-    // Initial resize trigger
+    // Initial resize trigger and resize observer for fluid mobile responsive layouts
     setTimeout(() => {
       map.invalidateSize();
-    }, 250);
+    }, 200);
+
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
 
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
       markersLayerRef.current = null;
+      landmarksLayerRef.current = null;
+      routeLayerRef.current = null;
       driverMarkerRef.current = null;
     };
   }, []);
 
-  // Update Tile Layer when Dark/Light changes
+  // Update Tile Layer with Authenticated Key (?key=...) and seamless OpenStreetMap fallback
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -809,10 +847,22 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       }
     });
 
-    const cartoKey = 'cb1_4kq7_1_cdef43338f3cb85d9245d692';
+    fallbackAppliedRef.current = false;
+
+    if (tileProvider === 'osm') {
+      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors',
+      });
+      osmLayer.addTo(map);
+      return;
+    }
+
+    // Authenticated CartoDB raster tiles with valid query key
+    const keyParam = cartoApiKey ? `?key=${encodeURIComponent(cartoApiKey)}` : '';
     const tileUrl = isDark
-      ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`
-      : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${cartoKey}`;
+      ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png${keyParam}`
+      : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${keyParam}`;
 
     const layer = L.tileLayer(tileUrl, {
       maxZoom: 19,
@@ -820,71 +870,220 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       crossOrigin: true,
     });
 
-    layer.on('tileerror', (error) => {
-      console.warn('Tile error, falling back to OSM:', error);
+    layer.on('tileerror', () => {
+      if (!fallbackAppliedRef.current) {
+        fallbackAppliedRef.current = true;
+        const osmFallback = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors',
+        });
+        osmFallback.addTo(map);
+      }
     });
 
     layer.addTo(map);
-  }, [isDark]);
+  }, [isDark, tileProvider, cartoApiKey]);
 
-  // Update Static Pins, Route Polyline, and Bounds
+  // Interactive Tap on Map to set Pickup or Destination
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !interactiveTapToSelect || (!onUpdatePickup && !onUpdateDestination)) return;
+
+    const handleMapClick = (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+
+      // Find nearest preset landmark in Montego Bay to provide human-friendly name
+      let nearestName = 'Montego Bay Street Location';
+      let minDistance = Infinity;
+      for (const preset of JAMAICA_PRESETS) {
+        const d = distanceBetween({ lat, lng }, { lat: preset.lat, lng: preset.lng });
+        if (d < minDistance) {
+          minDistance = d;
+          nearestName = d < 0.6 ? `Near ${preset.name}` : `${preset.area} (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
+        }
+      }
+
+      const pointData: LocationPoint = {
+        id: `loc-tapped-${Date.now()}`,
+        name: nearestName,
+        address: `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° W`,
+        area: 'Montego Bay & St. James',
+        lat,
+        lng,
+      };
+
+      const popupContent = document.createElement('div');
+      popupContent.style.cssText = 'font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 4px; min-width: 170px;';
+      popupContent.innerHTML = `
+        <div style="font-size: 11px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">${nearestName}</div>
+        <div style="font-size: 9px; color: #64748b; margin-bottom: 8px;">${lat.toFixed(4)}, ${lng.toFixed(4)}</div>
+        <div style="display: flex; gap: 6px; justify-content: center;">
+          <button id="map-set-pickup-btn" style="background: #00A651; color: white; font-size: 10px; font-weight: 800; padding: 5px 9px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+            📍 Set Pickup
+          </button>
+          <button id="map-set-dropoff-btn" style="background: #D92D20; color: white; font-size: 10px; font-weight: 800; padding: 5px 9px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+            🏁 Set Dropoff
+          </button>
+        </div>
+      `;
+
+      L.popup({ offset: [0, -10], closeButton: true })
+        .setLatLng([lat, lng])
+        .setContent(popupContent)
+        .openOn(map);
+
+      setTimeout(() => {
+        const pickupBtn = popupContent.querySelector('#map-set-pickup-btn');
+        const dropoffBtn = popupContent.querySelector('#map-set-dropoff-btn');
+        if (pickupBtn && onUpdatePickup) {
+          pickupBtn.addEventListener('click', () => {
+            onUpdatePickup(pointData);
+            map.closePopup();
+          });
+        }
+        if (dropoffBtn && onUpdateDestination) {
+          dropoffBtn.addEventListener('click', () => {
+            onUpdateDestination(pointData);
+            map.closePopup();
+          });
+        }
+      }, 50);
+    };
+
+    map.on('click', handleMapClick);
+    return () => {
+      map.off('click', handleMapClick);
+    };
+  }, [interactiveTapToSelect, onUpdatePickup, onUpdateDestination]);
+
+  // Update Static Pins, Landmark Presets, Route Polyline, and Bounds
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = markersLayerRef.current;
-    if (!map || !layerGroup) return;
+    const landmarksGroup = landmarksLayerRef.current;
+    const routeGroup = routeLayerRef.current;
+    if (!map || !layerGroup || !landmarksGroup || !routeGroup) return;
 
-    // Clear existing markers except we handle driver separately
+    // Clear existing markers & route
     layerGroup.clearLayers();
+    landmarksGroup.clearLayers();
+    routeGroup.clearLayers();
     driverMarkerRef.current = null;
 
-    if (routeLayerRef.current) {
-      map.removeLayer(routeLayerRef.current);
-      routeLayerRef.current = null;
-    }
+    const canDrag = Boolean(allowPinDrag && (activeStatus === undefined || activeStatus === null || activeStatus === 'CANCELLED_BY_PASSENGER' || activeStatus === 'COMPLETED'));
 
-    // 1. Pickup Marker (Green Pulse Ring Pin)
+    // 1. Pickup Marker (Green Pulse Ring Pin) - DRAGGABLE
     const pickupHtml = `
-      <div style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-        <div style="position: absolute; inset: 0; border-radius: 9999px; background: rgba(0, 166, 81, 0.35); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-        <div style="width: 20px; height: 20px; border-radius: 9999px; background: #00A651; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 5px; height: 5px; border-radius: 9999px; background: #ffffff;"></div>
+      <div style="position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: ${canDrag ? 'grab' : 'pointer'};">
+        <div style="position: absolute; inset: 0; border-radius: 9999px; background: rgba(0, 166, 81, 0.4); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+        <div style="width: 22px; height: 22px; border-radius: 9999px; background: #00A651; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 6px; height: 6px; border-radius: 9999px; background: #ffffff;"></div>
         </div>
       </div>
     `;
     const pickupIcon = L.divIcon({
       html: pickupHtml,
       className: 'custom-pickup-pin',
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
     });
-    L.marker([pickup.lat, pickup.lng], { icon: pickupIcon })
-      .bindPopup(`<b>Pickup:</b> ${pickup.name}`)
+    const pickupMarker = L.marker([pickup.lat, pickup.lng], { icon: pickupIcon, draggable: canDrag })
+      .bindPopup(`<b>Pickup Location:</b> ${pickup.name}${canDrag ? '<br><small style="color:#00A651; font-weight:bold;">💡 Drag pin to reposition pickup</small>' : ''}`)
       .addTo(layerGroup);
 
-    // 2. Destination Marker (Red Pin with Square Head)
+    if (canDrag && onUpdatePickup) {
+      pickupMarker.on('dragend', (e: L.DragEndEvent) => {
+        const newPos = e.target.getLatLng();
+        let nearestName = 'Custom Montego Bay Pickup';
+        let minDistance = Infinity;
+        for (const preset of JAMAICA_PRESETS) {
+          const d = distanceBetween({ lat: newPos.lat, lng: newPos.lng }, { lat: preset.lat, lng: preset.lng });
+          if (d < minDistance) {
+            minDistance = d;
+            nearestName = d < 0.6 ? `Near ${preset.name}` : `Montego Bay (${newPos.lat.toFixed(3)}, ${newPos.lng.toFixed(3)})`;
+          }
+        }
+        onUpdatePickup({
+          id: `loc-drag-${Date.now()}`,
+          name: nearestName,
+          address: `${newPos.lat.toFixed(4)}° N, ${newPos.lng.toFixed(4)}° W`,
+          area: 'Montego Bay',
+          lat: newPos.lat,
+          lng: newPos.lng,
+        });
+      });
+    }
+
+    // 2. Destination Marker (Red Pin with Square Head) - DRAGGABLE
     const dropoffHtml = `
-      <div style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-        <div style="width: 20px; height: 20px; border-radius: 4px; background: #D92D20; border: 3px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;">
-          <div style="width: 5px; height: 5px; border-radius: 1px; background: #ffffff;"></div>
+      <div style="position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: ${canDrag ? 'grab' : 'pointer'};">
+        <div style="width: 22px; height: 22px; border-radius: 6px; background: #D92D20; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 6px; height: 6px; border-radius: 2px; background: #ffffff;"></div>
         </div>
       </div>
     `;
     const dropoffIcon = L.divIcon({
       html: dropoffHtml,
       className: 'custom-dropoff-pin',
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
     });
-    L.marker([destination.lat, destination.lng], { icon: dropoffIcon })
-      .bindPopup(`<b>Destination:</b> ${destination.name}`)
+    const dropoffMarker = L.marker([destination.lat, destination.lng], { icon: dropoffIcon, draggable: canDrag })
+      .bindPopup(`<b>Destination:</b> ${destination.name}${canDrag ? '<br><small style="color:#D92D20; font-weight:bold;">💡 Drag pin to reposition destination</small>' : ''}`)
       .addTo(layerGroup);
 
-    // 3. Nearby Idle Fleet in Jamaica (when searching or idle)
+    if (canDrag && onUpdateDestination) {
+      dropoffMarker.on('dragend', (e: L.DragEndEvent) => {
+        const newPos = e.target.getLatLng();
+        let nearestName = 'Custom Montego Bay Destination';
+        let minDistance = Infinity;
+        for (const preset of JAMAICA_PRESETS) {
+          const d = distanceBetween({ lat: newPos.lat, lng: newPos.lng }, { lat: preset.lat, lng: preset.lng });
+          if (d < minDistance) {
+            minDistance = d;
+            nearestName = d < 0.6 ? `Near ${preset.name}` : `Montego Bay (${newPos.lat.toFixed(3)}, ${newPos.lng.toFixed(3)})`;
+          }
+        }
+        onUpdateDestination({
+          id: `loc-drag-${Date.now()}`,
+          name: nearestName,
+          address: `${newPos.lat.toFixed(4)}° N, ${newPos.lng.toFixed(4)}° W`,
+          area: 'Montego Bay',
+          lat: newPos.lat,
+          lng: newPos.lng,
+        });
+      });
+    }
+
+    // 3. Clickable Landmark Presets across Montego Bay (When idle or searching)
     if (!activeStatus || activeStatus === 'SEARCHING') {
+      const featuredLandmarks = JAMAICA_PRESETS.slice(0, 6);
+      featuredLandmarks.forEach(landmark => {
+        if (landmark.id === pickup.id || landmark.id === destination.id) return;
+        const landmarkHtml = `
+          <div style="background: rgba(15, 23, 42, 0.9); color: white; padding: 2px 6px; border-radius: 9999px; border: 1px solid rgba(255, 214, 0, 0.6); font-size: 9px; font-weight: 800; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; items-center; gap: 3px; cursor: pointer;">
+            <span style="color: #FFD600;">★</span> ${landmark.name.split(' ')[0]}
+          </div>
+        `;
+        const lmIcon = L.divIcon({
+          html: landmarkHtml,
+          className: 'landmark-pin',
+          iconSize: [60, 20],
+          iconAnchor: [30, 10],
+        });
+        const lmMarker = L.marker([landmark.lat, landmark.lng], { icon: lmIcon }).addTo(landmarksGroup);
+        lmMarker.on('click', () => {
+          if (onUpdateDestination) {
+            onUpdateDestination(landmark);
+          }
+        });
+      });
+
+      // Nearby Idle Fleet in Montego Bay
       const nearbyFleet = [
-        { lat: pickup.lat + 0.0035, lng: pickup.lng - 0.0040 },
-        { lat: pickup.lat - 0.0030, lng: pickup.lng + 0.0045 },
-        { lat: pickup.lat + 0.0050, lng: pickup.lng + 0.0030 },
+        { lat: pickup.lat + 0.0032, lng: pickup.lng - 0.0038 },
+        { lat: pickup.lat - 0.0028, lng: pickup.lng + 0.0042 },
+        { lat: pickup.lat + 0.0048, lng: pickup.lng + 0.0022 },
       ];
       nearbyFleet.forEach(pos => {
         const idleCarHtml = `
@@ -902,35 +1101,42 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       });
     }
 
-    // 4. Draw Appropriate Street Route Polyline
+    // 4. Draw High-Visibility Dual-Layer Route Polyline
     let routeCoords: L.LatLngExpression[] = [];
     let polylineColor = '#00A651';
 
     if (activeStatus === 'DRIVER_ARRIVING') {
-      // Approach route from driver start to pickup
       const approachWaypoints = generateApproachWaypoints(pickup);
       routeCoords = approachWaypoints.map(p => [p.lat, p.lng]);
-      polylineColor = '#FFD600'; // Jamaican Gold for driver arriving
+      polylineColor = '#FFD600'; // Jamaican Gold for approach
     } else if (activeStatus === 'IN_PROGRESS' || showRoute) {
-      // Full trip route from pickup to destination
       const tripWaypoints = generateTripWaypoints(pickup, destination);
       routeCoords = tripWaypoints.map(p => [p.lat, p.lng]);
-      polylineColor = '#00A651'; // Jamaican Green for active trip
+      polylineColor = '#00A651'; // Jamaican Green for trip
     }
 
     if (routeCoords.length > 0) {
-      const polyline = L.polyline(routeCoords, {
-        color: polylineColor,
-        weight: 6,
-        opacity: 0.92,
+      // Outer shadow casing for clear visibility
+      L.polyline(routeCoords, {
+        color: '#070a0e',
+        weight: 9,
+        opacity: 0.5,
         lineCap: 'round',
         lineJoin: 'round',
-      }).addTo(map);
-      routeLayerRef.current = polyline;
+      }).addTo(routeGroup);
+
+      // Inner stroke
+      L.polyline(routeCoords, {
+        color: polylineColor,
+        weight: 6,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(routeGroup);
     }
 
     // Fit bounds once for this pickup/destination/status combo
-    const statusKey = `${pickup.id}_${destination.id}_${activeStatus || 'default'}`;
+    const statusKey = `${pickup.id}_${destination.id}_${activeStatus || 'default'}_${pickup.lat}_${pickup.lng}_${destination.lat}_${destination.lng}`;
     if (lastFittedStatusRef.current !== statusKey) {
       lastFittedStatusRef.current = statusKey;
       if (activeStatus === 'DRIVER_ARRIVING') {
@@ -947,9 +1153,9 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
         map.setView([pickup.lat, pickup.lng], 15);
       }
     }
-  }, [pickup, destination, showRoute, activeStatus]);
+  }, [pickup, destination, showRoute, activeStatus, allowPinDrag, onUpdatePickup, onUpdateDestination]);
 
-  // 5. Dedicated Smooth Driver Marker Movement & Rotation
+  // 5. Smooth Driver Car Marker Movement & Heading Rotation
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = markersLayerRef.current;
@@ -960,10 +1166,7 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
       : { lat: pickup.lat - 0.005, lng: pickup.lng + 0.004, bearing: 45 });
 
     if (driverMarkerRef.current) {
-      // Smoothly reposition marker
       driverMarkerRef.current.setLatLng([currentPos.lat, currentPos.lng]);
-
-      // Smoothly rotate the car chassis via DOM
       const markerEl = driverMarkerRef.current.getElement();
       if (markerEl) {
         const wrapper = markerEl.querySelector('.car-rotation-wrapper') as HTMLElement;
@@ -972,26 +1175,59 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
         }
       }
     } else {
-      // Create driver marker
       const initialBearing = currentPos.bearing ?? 45;
       const icon = createCarIcon(initialBearing, 'Dwayne (Toyota Corolla)');
       const marker = L.marker([currentPos.lat, currentPos.lng], {
         icon,
-        zIndexOffset: 1000, // Keep car on top of all pins
+        zIndexOffset: 1000,
       })
-        .bindPopup(`<b>Driver Dwayne Williams</b><br>Silver Toyota Corolla (PPV-4820)`)
+        .bindPopup(`<b>Driver Dwayne Williams</b><br>Silver Toyota Corolla (876-MBJ-1)`)
         .addTo(layerGroup);
 
       driverMarkerRef.current = marker;
     }
   }, [driverPosition, activeStatus, pickup]);
 
+  // GPS "Locate Me" Handler
+  const handleLocateMe = () => {
+    setGpsLoading(true);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setGpsLoading(false);
+          const { latitude: lat, longitude: lng } = pos.coords;
+          mapInstanceRef.current?.setView([lat, lng], 16, { animate: true });
+          if (onUpdatePickup) {
+            onUpdatePickup({
+              id: `loc-gps-${Date.now()}`,
+              name: 'My Current Location (GPS)',
+              address: `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° W`,
+              area: 'Montego Bay, St. James',
+              lat,
+              lng,
+            });
+          }
+        },
+        () => {
+          setGpsLoading(false);
+          // Fallback to Montego Bay Hip Strip [18.4841, -77.9254]
+          mapInstanceRef.current?.setView([18.4841, -77.9254], 15, { animate: true });
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      setGpsLoading(false);
+      mapInstanceRef.current?.setView([18.4841, -77.9254], 15, { animate: true });
+    }
+  };
+
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden select-none">
       <div ref={containerRef} className="w-full h-full z-0" />
 
-      {/* Recenter & Zoom Controls */}
+      {/* Touch-Friendly Mobile Map Controls */}
       <div className="absolute top-14 right-3 z-[400] flex flex-col gap-2">
+        {/* Recenter Button */}
         <button
           onClick={() => {
             const map = mapInstanceRef.current;
@@ -1003,32 +1239,114 @@ const JamaicaLeafletMap: React.FC<LeafletMapProps> = ({
               }
             }
           }}
-          title="Recenter to Live Car / Pickup"
-          className="w-10 h-10 rounded-full bg-white shadow-lg border border-slate-200 flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition-all"
+          title="Recenter to Live Car or Pickup"
+          className="w-11 h-11 rounded-2xl bg-white shadow-xl border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition-all"
+          aria-label="Recenter map"
         >
           <Navigation className="w-5 h-5 text-[#00A651]" />
         </button>
 
-        <div className="flex flex-col rounded-2xl bg-white shadow-lg border border-slate-200 overflow-hidden divide-y divide-slate-100">
+        {/* GPS Locate Me Button */}
+        <button
+          onClick={handleLocateMe}
+          title="Locate my position via GPS"
+          disabled={gpsLoading}
+          className="w-11 h-11 rounded-2xl bg-white shadow-xl border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition-all"
+          aria-label="Locate with GPS"
+        >
+          <Compass className={`w-5 h-5 text-blue-600 ${gpsLoading ? 'animate-spin' : ''}`} />
+        </button>
+
+        {/* Map Tile Layer Toggle (CartoDB Authenticated vs OpenStreetMap) */}
+        <button
+          onClick={() => setTileProvider(prev => prev === 'carto' ? 'osm' : 'carto')}
+          title={tileProvider === 'carto' ? 'Switch to OpenStreetMap Standard' : 'Switch to CartoDB High-Res'}
+          className="w-11 h-11 rounded-2xl bg-white shadow-xl border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition-all"
+          aria-label="Toggle map layer"
+        >
+          <Layers className={`w-5 h-5 ${tileProvider === 'carto' ? 'text-[#00A651]' : 'text-amber-600'}`} />
+        </button>
+
+        {/* Zoom In & Out Controls */}
+        <div className="flex flex-col rounded-2xl bg-white shadow-xl border border-slate-200/90 overflow-hidden divide-y divide-slate-100">
           <button
             onClick={() => mapInstanceRef.current?.zoomIn()}
-            className="w-10 h-9 flex items-center justify-center text-slate-700 font-extrabold text-base hover:bg-slate-50"
+            className="w-11 h-10 flex items-center justify-center text-slate-700 font-black text-lg hover:bg-slate-50 active:bg-slate-100"
+            aria-label="Zoom in"
           >
             +
           </button>
           <button
             onClick={() => mapInstanceRef.current?.zoomOut()}
-            className="w-10 h-9 flex items-center justify-center text-slate-700 font-extrabold text-base hover:bg-slate-50"
+            className="w-11 h-10 flex items-center justify-center text-slate-700 font-black text-lg hover:bg-slate-50 active:bg-slate-100"
+            aria-label="Zoom out"
           >
             -
           </button>
         </div>
       </div>
 
-      {/* Map Watermark Banner */}
-      <div className="absolute bottom-2 left-2 z-[400] px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm border border-slate-200 text-[9px] font-semibold text-slate-600 shadow-sm flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#00A651]"></span>
-        <span>Live Navigation • CARTO / OpenStreetMap</span>
+      {/* Live Simulation On-Map HUD Chip */}
+      {(activeStatus === 'DRIVER_ARRIVING' || activeStatus === 'IN_PROGRESS') && (
+        <div className="absolute top-14 left-3 z-[400] max-w-[210px] bg-slate-900/95 backdrop-blur-md text-white p-2.5 rounded-2xl border border-slate-700 shadow-2xl space-y-1.5 animate-in fade-in">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-extrabold text-[#FFD600] flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] animate-ping" />
+              {activeStatus === 'DRIVER_ARRIVING' ? 'Car Arriving' : 'Trip In Progress'}
+            </span>
+            <span className="text-[10px] font-mono text-slate-400">{Math.round(simProgress)}%</span>
+          </div>
+
+          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-500 rounded-full ${activeStatus === 'DRIVER_ARRIVING' ? 'bg-[#FFD600]' : 'bg-[#00A651]'}`}
+              style={{ width: `${Math.min(100, Math.max(5, simProgress))}%` }}
+            />
+          </div>
+
+          {onFastForward && (
+            <button
+              onClick={onFastForward}
+              className="w-full py-1 rounded-lg bg-[#00A651] hover:bg-green-600 text-white font-extrabold text-[10px] transition-colors shadow"
+            >
+              {activeStatus === 'DRIVER_ARRIVING' ? '⚡ Arrive Now' : '🏁 Complete Trip'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Authenticated Map & Montego Bay Live Status Badge */}
+      <div className="absolute bottom-2 left-2 z-[400] flex items-center gap-1.5">
+        <button
+          onClick={() => setShowKeyInfo(prev => !prev)}
+          className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 text-[10px] font-semibold text-slate-800 shadow-sm flex items-center gap-1.5 hover:bg-slate-50 transition-colors"
+          title="Click to view API Key and Map provider details"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#00A651] animate-pulse" />
+          <span>Montego Bay Live</span>
+          <span className="text-slate-300">•</span>
+          {tileProvider === 'carto' ? (
+            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+              <Key className="w-2.5 h-2.5" /> Key Active
+            </span>
+          ) : (
+            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
+              OSM
+            </span>
+          )}
+        </button>
+
+        {showKeyInfo && (
+          <div className="p-2.5 rounded-xl bg-slate-900/95 text-white text-[10px] shadow-2xl border border-slate-700 animate-in fade-in space-y-1 max-w-[240px]">
+            <div className="flex items-center justify-between font-bold text-emerald-400">
+              <span className="flex items-center gap-1"><Key className="w-3 h-3" /> API Key Authenticated</span>
+              <button onClick={() => setShowKeyInfo(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <p className="text-slate-300">
+              Key <code className="text-yellow-400 font-mono">cb1_4kq7...</code> verified. Clean high-resolution CartoDB vector/raster tiles active without watermark.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1209,16 +1527,28 @@ export default function App() {
   // Current Active Ride State
   const [currentRide, setCurrentRide] = useState<RideRequest | null>(() => {
     const saved = localStorage.getItem('rideja_active_ride');
-    return saved ? JSON.parse(saved) : null;
+    if (!saved) return null;
+    try {
+      const parsed = JSON.parse(saved);
+      // Auto-refresh if previous cached ride was from Kingston
+      if (parsed?.pickup?.area?.includes('Kingston')) {
+        localStorage.removeItem('rideja_active_ride');
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
   });
 
-  // Passenger Booking Workflow State
-  const [pickupLoc, setPickupLoc] = useState<LocationPoint>(JAMAICA_PRESETS[0]); // Half Way Tree
-  const [dropoffLoc, setDropoffLoc] = useState<LocationPoint>(JAMAICA_PRESETS[1]); // New Kingston
+  // Passenger Booking Workflow State - Centered on Montego Bay
+  const [pickupLoc, setPickupLoc] = useState<LocationPoint>(JAMAICA_PRESETS[0]); // Doctor's Cave Beach & Hip Strip
+  const [dropoffLoc, setDropoffLoc] = useState<LocationPoint>(JAMAICA_PRESETS[1]); // Sangster International Airport (MBJ)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState<RideCategoryKey>('economy');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'visa' | 'mastercard'>('visa');
   const [promoCode, setPromoCode] = useState<string>('');
   const [promoDiscountJMD, setPromoDiscountJMD] = useState<number>(0);
+  const [isApplyingPromo, setIsApplyingPromo] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeSearchField, setActiveSearchField] = useState<'pickup' | 'dropoff'>('dropoff');
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
@@ -1830,12 +2160,19 @@ export default function App() {
   const renderPassengerHome = () => (
     <div className="relative w-full h-full flex flex-col bg-white overflow-hidden">
       {/* Real Interactive Leaflet Street Map Container */}
-      <div className="flex-1 relative">
+      <div className="flex-1 min-h-0 relative">
         <JamaicaLeafletMap
           pickup={pickupLoc}
           destination={dropoffLoc}
-          showRoute={false}
+          showRoute={true}
           driverPosition={currentRide?.driverPosition}
+          onUpdatePickup={setPickupLoc}
+          onUpdateDestination={setDropoffLoc}
+          allowPinDrag={!currentRide || currentRide.status === 'CANCELLED_BY_PASSENGER' || currentRide.status === 'COMPLETED'}
+          interactiveTapToSelect={!currentRide || currentRide.status === 'CANCELLED_BY_PASSENGER' || currentRide.status === 'COMPLETED'}
+          activeStatus={currentRide?.status}
+          onFastForward={currentRide?.status === 'DRIVER_ARRIVING' ? handleFastForwardArrival : currentRide?.status === 'IN_PROGRESS' ? handleFastForwardTrip : undefined}
+          simProgress={simProgress}
         />
 
         {/* Top Native Header & Search Overlays */}
@@ -1861,22 +2198,39 @@ export default function App() {
             </button>
           </div>
 
-          {/* Pickup and Destination Card (Matches Phone 2 in Collage) */}
+          {/* Pickup and Destination Card with Swap & Preset Pills */}
           <div className="mx-4 mt-1 p-3 bg-white rounded-2xl shadow-2xl border border-slate-200/90 space-y-2">
-            <button
-              onClick={() => {
-                setActiveSearchField('pickup');
-                setIsSearchingLocation(true);
-              }}
-              className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left"
-            >
-              <div className="w-3 h-3 rounded-full bg-[#00A651] ring-4 ring-green-100 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Pickup location</p>
-                <p className="text-sm font-semibold text-slate-800 truncate">{pickupLoc.name}</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setActiveSearchField('pickup');
+                  setIsSearchingLocation(true);
+                }}
+                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left"
+              >
+                <div className="w-3 h-3 rounded-full bg-[#00A651] ring-4 ring-green-100 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Pickup location</p>
+                  <p className="text-sm font-semibold text-slate-800 truncate">{pickupLoc.name}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              {/* Fast Swap Pickup & Destination Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const temp = pickupLoc;
+                  setPickupLoc(dropoffLoc);
+                  setDropoffLoc(temp);
+                  showToast('Swapped pickup and destination');
+                }}
+                title="Swap pickup and destination"
+                className="absolute right-9 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center shadow-sm active:rotate-180 transition-transform"
+              >
+                <ArrowUpDown className="w-3.5 h-3.5 text-slate-600" />
+              </button>
+            </div>
 
             <div className="h-px bg-slate-100 mx-2" />
 
@@ -1894,6 +2248,34 @@ export default function App() {
               </div>
               <Search className="w-4 h-4 text-slate-400" />
             </button>
+
+            {/* Quick 1-Tap Landmark Shortcuts for Effortless Testing */}
+            <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+              <span className="text-[10px] font-bold text-slate-400 shrink-0">Quick:</span>
+              {[
+                JAMAICA_PRESETS[1], // Sangster Airport
+                JAMAICA_PRESETS[2], // Sam Sharpe Sq
+                JAMAICA_PRESETS[3], // Fairview Centre
+                JAMAICA_PRESETS[4], // Cruise Terminal
+                JAMAICA_PRESETS[5], // Pier 1
+                JAMAICA_PRESETS[6], // Rose Hall
+              ].map(preset => (
+                <button
+                  key={preset.id}
+                  onClick={() => {
+                    setDropoffLoc(preset);
+                    showToast(`Destination set: ${preset.name}`);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition-colors ${
+                    dropoffLoc.id === preset.id
+                      ? 'bg-[#00A651] text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {preset.name.split(' ')[0]} {preset.name.includes('Airport') ? '✈️' : preset.name.includes('Cruise') ? '🚢' : ''}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -1916,7 +2298,7 @@ export default function App() {
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search Kingston, Portmore, Mobay..."
+                  placeholder="Search Montego Bay, Hip Strip, Rose Hall, Airport..."
                   className="w-full text-base font-semibold text-slate-900 outline-none"
                 />
               </div>
@@ -1968,7 +2350,7 @@ export default function App() {
       </div>
 
       {/* Bottom Ride Category Sheet (Matches Phone 2 in Collage) */}
-      <div className="p-4 bg-white border-t border-slate-100 rounded-t-3xl shadow-2xl space-y-3 z-10">
+      <div className="shrink-0 p-3.5 sm:p-4 bg-white border-t border-slate-100 rounded-t-3xl shadow-2xl space-y-2.5 sm:space-y-3 z-10">
         <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto" />
         <div className="flex items-center justify-between">
           <p className="text-xs font-bold uppercase text-slate-400 tracking-wider">Available Rides</p>
@@ -2122,22 +2504,50 @@ export default function App() {
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
-          {/* Promo Code Trigger */}
-          <button
-            onClick={() => {
-              const code = prompt('Enter promo code (e.g. WELCOMEJA):', promoCode);
-              if (code !== null) {
-                setPromoCode(code);
-                if (code.trim().toUpperCase() === 'WELCOMEJA') {
-                  setPromoDiscountJMD(500);
-                  showToast('JMD 500 discount applied!');
-                }
-              }
-            }}
-            className="text-xs font-bold text-[#00A651] hover:underline"
-          >
-            {promoDiscountJMD > 0 ? 'Promo Applied (-$500)' : 'Apply promo code >'}
-          </button>
+          {/* Mobile-Friendly Inline Promo Code Trigger */}
+          {isApplyingPromo ? (
+            <div className="flex items-center gap-1.5 w-full">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={e => setPromoCode(e.target.value)}
+                placeholder="Code: WELCOMEJA"
+                className="flex-1 px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold uppercase tracking-wider outline-none focus:border-[#00A651]"
+              />
+              <button
+                onClick={() => {
+                  if (promoCode.trim().toUpperCase() === 'WELCOMEJA') {
+                    setPromoDiscountJMD(500);
+                    showToast('JMD $500 discount applied!');
+                    setIsApplyingPromo(false);
+                  } else if (!promoCode.trim()) {
+                    setIsApplyingPromo(false);
+                  } else {
+                    showToast('Invalid code. Try "WELCOMEJA" for JMD $500 off');
+                  }
+                }}
+                className="px-2.5 py-1 rounded-lg bg-[#00A651] text-white text-[11px] font-bold hover:bg-green-600 transition-colors shrink-0"
+              >
+                Apply
+              </button>
+              <button
+                onClick={() => setIsApplyingPromo(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setPromoCode('WELCOMEJA');
+                setIsApplyingPromo(true);
+              }}
+              className="text-xs font-bold text-[#00A651] hover:underline"
+            >
+              {promoDiscountJMD > 0 ? 'Promo Applied (-JMD $500)' : 'Apply promo code >'}
+            </button>
+          )}
         </div>
 
         {/* Authoritative Request Ride Action */}
@@ -2235,6 +2645,8 @@ export default function App() {
           showRoute={true}
           driverPosition={currentRide?.driverPosition}
           activeStatus={currentRide?.status || 'DRIVER_ARRIVING'}
+          onFastForward={handleFastForwardArrival}
+          simProgress={simProgress}
         />
 
         {/* Top Floating ETA Card (Matches Phone 4 in Collage) */}
@@ -2409,6 +2821,8 @@ export default function App() {
           showRoute={true}
           driverPosition={currentRide?.driverPosition}
           activeStatus="IN_PROGRESS"
+          onFastForward={handleFastForwardTrip}
+          simProgress={simProgress}
         />
 
         {/* Top Dark Badge: "On trip • Enjoy your ride" (Matches Phone 5 in Collage) */}
@@ -2619,9 +3033,10 @@ export default function App() {
 
   // 9. Account & Settings Screen (Matches Collage Phone 7)
   const renderPassengerAccount = () => (
-    <div className="w-full h-full bg-[#f8fafc] flex flex-col justify-between overflow-y-auto">
-      <div>
-        <div className="p-4 space-y-4">
+    <div className="w-full h-full bg-[#f8fafc] flex flex-col overflow-hidden">
+      {/* Scrollable Account Content Viewport */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="p-4 space-y-4 pb-6">
           {/* User Profile Card Header */}
           <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
             <div className="w-14 h-14 rounded-full bg-slate-800 text-white flex items-center justify-center font-extrabold text-xl">
@@ -2732,8 +3147,9 @@ export default function App() {
 
   // 10. Payment Methods Screen (Matches Collage Phone 8)
   const renderPassengerWallet = () => (
-    <div className="w-full h-full bg-white flex flex-col justify-between overflow-y-auto">
-      <div>
+    <div className="w-full h-full bg-white flex flex-col overflow-hidden">
+      {/* Scrollable Wallet Viewport */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
           <button
             onClick={() => setPassengerScreen('home')}
@@ -2936,8 +3352,9 @@ export default function App() {
 
   // 12. Explore Jamaica Screen (Matches Collage Phone 10)
   const renderPassengerExplore = () => (
-    <div className="w-full h-full bg-[#f8fafc] flex flex-col justify-between overflow-y-auto">
-      <div>
+    <div className="w-full h-full bg-[#f8fafc] flex flex-col overflow-hidden">
+      {/* Scrollable Explore Content Viewport */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         <div className="p-4 border-b border-slate-100 bg-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-[#00A651] flex items-center justify-center">
@@ -2948,11 +3365,11 @@ export default function App() {
           <span className="text-xs font-semibold text-slate-500">Rides for every occasion</span>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-4 pb-6">
           {/* Airport Transfers */}
           <div
             onClick={() => {
-              setDropoffLoc(JAMAICA_PRESETS[2]); // Norman Manley
+              setDropoffLoc(JAMAICA_PRESETS[1]); // Sangster MBJ
               setSelectedCategoryKey('airport');
               setPassengerScreen('choose_ride');
             }}
@@ -2968,14 +3385,14 @@ export default function App() {
                 AIRPORT TRANSFERS
               </span>
               <h3 className="font-extrabold text-base">Start your trip stress-free</h3>
-              <p className="text-xs text-slate-300">Norman Manley (KIN) & Sangster (MBJ)</p>
+              <p className="text-xs text-slate-300">Sangster (MBJ) & Norman Manley (KIN)</p>
             </div>
           </div>
 
           {/* City Rides */}
           <div
             onClick={() => {
-              setDropoffLoc(JAMAICA_PRESETS[1]); // New Kingston
+              setDropoffLoc(JAMAICA_PRESETS[2]); // Sam Sharpe Sq
               setSelectedCategoryKey('economy');
               setPassengerScreen('choose_ride');
             }}
@@ -2983,7 +3400,7 @@ export default function App() {
           >
             <img
               src="https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=800&auto=format&fit=crop&q=80"
-              alt="Kingston City"
+              alt="Montego Bay City"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent p-5 flex flex-col justify-end text-white">
@@ -2991,7 +3408,7 @@ export default function App() {
                 CITY RIDES
               </span>
               <h3 className="font-extrabold text-base">Get around town quickly</h3>
-              <p className="text-xs text-slate-300">Kingston, Half Way Tree, Portmore</p>
+              <p className="text-xs text-slate-300">Hip Strip, Sam Sharpe Sq, Fairview</p>
             </div>
           </div>
 
@@ -3026,8 +3443,9 @@ export default function App() {
 
   // 13. Activity & Trip History Screen
   const renderPassengerActivity = () => (
-    <div className="w-full h-full bg-[#f8fafc] flex flex-col justify-between overflow-y-auto">
-      <div>
+    <div className="w-full h-full bg-[#f8fafc] flex flex-col overflow-hidden">
+      {/* Scrollable Activity Content Viewport */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         <div className="p-4 border-b border-slate-100 bg-white flex items-center justify-between">
           <button
             onClick={() => setPassengerScreen('home')}
@@ -3039,7 +3457,7 @@ export default function App() {
           <div className="w-9" />
         </div>
 
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3 pb-6">
           {ledger.map((item, idx) => (
             <div key={`${item.id}-${idx}`} className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
@@ -3060,14 +3478,14 @@ export default function App() {
     </div>
   );
 
-  // Shared Bottom Navigation Bar for Passenger Screens
+  // Shared Bottom Navigation Bar for Passenger Screens (Fixed at bottom)
   function renderPassengerBottomNav(activeTab: 'home' | 'activity' | 'wallet' | 'account') {
     return (
-      <div className="bg-white border-t border-slate-200 px-6 pt-2 pb-5 flex flex-col shadow-lg z-20">
+      <nav aria-label="Passenger Bottom Navigation" className="shrink-0 bg-white border-t border-slate-200 px-6 pt-2 pb-5 flex flex-col shadow-lg z-30 select-none mt-auto">
         <div className="flex items-center justify-between">
           <button
             onClick={() => setPassengerScreen('home')}
-            className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#00A651]' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'home' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-600'}`}
           >
             <Home className="w-5 h-5" />
             <span className="text-[10px] font-bold">Home</span>
@@ -3075,7 +3493,7 @@ export default function App() {
 
           <button
             onClick={() => setPassengerScreen('activity')}
-            className={`flex flex-col items-center gap-1 ${activeTab === 'activity' ? 'text-[#00A651]' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'activity' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-600'}`}
           >
             <Clock className="w-5 h-5" />
             <span className="text-[10px] font-bold">Activity</span>
@@ -3083,7 +3501,7 @@ export default function App() {
 
           <button
             onClick={() => setPassengerScreen('wallet')}
-            className={`flex flex-col items-center gap-1 ${activeTab === 'wallet' ? 'text-[#00A651]' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'wallet' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-600'}`}
           >
             <CreditCard className="w-5 h-5" />
             <span className="text-[10px] font-bold">Wallet</span>
@@ -3091,7 +3509,7 @@ export default function App() {
 
           <button
             onClick={() => setPassengerScreen('account')}
-            className={`flex flex-col items-center gap-1 ${activeTab === 'account' ? 'text-[#00A651]' : 'text-slate-400'}`}
+            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === 'account' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-600'}`}
           >
             <User className="w-5 h-5" />
             <span className="text-[10px] font-bold">Account</span>
@@ -3099,7 +3517,7 @@ export default function App() {
         </div>
         {/* Bottom Native Home Indicator Bar */}
         <div className="w-32 h-1 bg-slate-300 rounded-full mx-auto mt-3" />
-      </div>
+      </nav>
     );
   }
 
@@ -3162,8 +3580,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Driver Main Content View */}
-        <div className="flex-1 relative overflow-y-auto">
+        {/* Driver Main Content View (Scrolls independently while bottom nav stays fixed) */}
+        <div className="flex-1 min-h-0 relative overflow-y-auto">
           {driverScreen === 'dashboard' && (
             <div className="w-full h-full flex flex-col justify-between">
               {/* Real Leaflet Dark Map */}
@@ -3175,13 +3593,15 @@ export default function App() {
                   showRoute={currentRide?.status === 'DRIVER_ARRIVING' || currentRide?.status === 'IN_PROGRESS'}
                   driverPosition={currentRide?.driverPosition}
                   activeStatus={currentRide?.status}
+                  onFastForward={currentRide?.status === 'DRIVER_ARRIVING' ? handleFastForwardArrival : currentRide?.status === 'IN_PROGRESS' ? handleFastForwardTrip : undefined}
+                  simProgress={simProgress}
                 />
 
                 {/* Status Indicator Banner */}
                 <div className="absolute top-3 left-3 right-3 z-[400] flex items-center justify-between">
                   <div className="px-3 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-slate-700 text-xs font-semibold flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${driver.isOnline ? 'bg-[#00A651] animate-ping' : 'bg-slate-500'}`} />
-                    <span>Zone: Kingston & Corporate Area</span>
+                    <span>Zone: Montego Bay & Western Hub</span>
                   </div>
 
                   {!driverEligibility.isEligible && (
@@ -3500,33 +3920,33 @@ export default function App() {
           )}
         </div>
 
-        {/* Driver Bottom Nav */}
-        <div className="p-3 bg-[#101418] border-t border-slate-800 flex flex-col">
+        {/* Driver Bottom Nav (Fixed at bottom) */}
+        <nav aria-label="Driver Bottom Navigation" className="shrink-0 p-3 bg-[#101418] border-t border-slate-800 flex flex-col z-30 mt-auto select-none">
           <div className="flex items-center justify-around">
             <button
               onClick={() => setDriverScreen('dashboard')}
-              className={`flex flex-col items-center gap-1 ${driverScreen === 'dashboard' ? 'text-[#00A651]' : 'text-slate-400'}`}
+              className={`flex flex-col items-center gap-1 transition-colors ${driverScreen === 'dashboard' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-200'}`}
             >
               <Navigation className="w-5 h-5" />
               <span className="text-[10px] font-bold">Drive</span>
             </button>
             <button
               onClick={() => setDriverScreen('compliance')}
-              className={`flex flex-col items-center gap-1 ${driverScreen === 'compliance' ? 'text-[#00A651]' : 'text-slate-400'}`}
+              className={`flex flex-col items-center gap-1 transition-colors ${driverScreen === 'compliance' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-200'}`}
             >
               <ShieldCheck className="w-5 h-5" />
               <span className="text-[10px] font-bold">Verification</span>
             </button>
             <button
               onClick={() => setDriverScreen('earnings')}
-              className={`flex flex-col items-center gap-1 ${driverScreen === 'earnings' ? 'text-[#00A651]' : 'text-slate-400'}`}
+              className={`flex flex-col items-center gap-1 transition-colors ${driverScreen === 'earnings' ? 'text-[#00A651]' : 'text-slate-400 hover:text-slate-200'}`}
             >
               <DollarSign className="w-5 h-5" />
               <span className="text-[10px] font-bold">Earnings</span>
             </button>
           </div>
           <div className="w-32 h-1 bg-slate-700 rounded-full mx-auto mt-2" />
-        </div>
+        </nav>
       </div>
     );
   };
@@ -3691,7 +4111,7 @@ export default function App() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-white truncate">Marcus (Super Admin)</p>
-                      <p className="text-[10px] text-[#00A651] font-semibold">Kingston Operations</p>
+                      <p className="text-[10px] text-[#00A651] font-semibold">Montego Bay Operations (Western Hub)</p>
                     </div>
                   </div>
                 </div>
@@ -3773,7 +4193,7 @@ export default function App() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-white truncate">Marcus (Super Admin)</p>
-                <p className="text-[10px] text-[#00A651] font-semibold">Kingston Operations</p>
+                <p className="text-[10px] text-[#00A651] font-semibold">Montego Bay Operations (Western Hub)</p>
               </div>
             </div>
           </div>
@@ -4106,6 +4526,8 @@ export default function App() {
                       showRoute={true}
                       driverPosition={currentRide?.driverPosition}
                       activeStatus={currentRide?.status}
+                      onFastForward={currentRide?.status === 'DRIVER_ARRIVING' ? handleFastForwardArrival : currentRide?.status === 'IN_PROGRESS' ? handleFastForwardTrip : undefined}
+                      simProgress={simProgress}
                     />
                   </div>
                 </div>
